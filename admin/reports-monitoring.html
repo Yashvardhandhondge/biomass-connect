@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports &amp; Monitoring | Admin | Biomass Connect</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/admin/reports-monitoring.css">
+</head>
+
+<body data-role="admin" data-page="reports-monitoring">
+
+    <div class="app-shell">
+
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <div class="app-main">
+
+            <header class="topbar" id="topbar"></header>
+
+            <main class="page">
+
+                <div class="page-header">
+                    <div>
+                        <h1>Reports &amp; Monitoring</h1>
+                        <p class="page-subtitle">Record and monitor the environmental impact of biomass co-firing across regions.</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" type="button" id="exportBtn">
+                            <i class="fa-solid fa-file-export"></i> Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPI CARDS (reflect current filters) -->
+
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-mountain"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiCoal">0 t</div>
+                            <div class="kpi-label">Coal Saved</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-wheat-awn"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiWaste">0 t</div>
+                            <div class="kpi-label">Agri Waste Utilised</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-leaf"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiCo2">0 t</div>
+                            <div class="kpi-label">CO₂ Emissions Avoided</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-fire-flame-curved"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiIncidents">0</div>
+                            <div class="kpi-label">Stubble Burning Incidents Prevented</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reports-grid">
+
+                    <!-- ENTRY FORM -->
+
+                    <section class="card" id="entryCard">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title" id="formTitle">Record Impact Data</div>
+                                <div class="card-subtitle" id="formSubtitle">Monthly figures for one region</div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form id="impactForm" novalidate>
+                                <div class="form-grid">
+
+                                    <div class="form-group">
+                                        <label for="impMonth">Reporting Month</label>
+                                        <input type="month" id="impMonth" placeholder="YYYY-MM" data-label="Reporting month" data-rules="required|month|notFutureMonth">
+                                        <small class="error"></small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="impState">State</label>
+                                        <select id="impState" data-rules="required">
+                                            <option value="">Select state</option>
+                                            <option>Andhra Pradesh</option>
+                                            <option>Bihar</option>
+                                            <option>Chhattisgarh</option>
+                                            <option>Gujarat</option>
+                                            <option>Haryana</option>
+                                            <option>Karnataka</option>
+                                            <option>Madhya Pradesh</option>
+                                            <option>Maharashtra</option>
+                                            <option>Odisha</option>
+                                            <option>Punjab</option>
+                                            <option>Rajasthan</option>
+                                            <option>Tamil Nadu</option>
+                                            <option>Telangana</option>
+                                            <option>Uttar Pradesh</option>
+                                            <option>West Bengal</option>
+                                        </select>
+                                        <small class="error"></small>
+                                    </div>
+
+                                    <div class="form-group full">
+                                        <label for="impDistrict">District / Region</label>
+                                        <input type="text" id="impDistrict" placeholder="e.g. Nashik" data-label="District" data-rules="required|name|maxlen:40">
+                                        <small class="error"></small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="impCoal">Coal Saved (tons)</label>
+                                        <input type="number" id="impCoal" placeholder="0.00" step="0.01" inputmode="decimal" data-label="Coal saved" data-rules="required|number|min:0|max:1000000|decimals:2">
+                                        <small class="error"></small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="impWaste">Agri Waste Utilised (tons)</label>
+                                        <input type="number" id="impWaste" placeholder="0.00" step="0.01" inputmode="decimal" data-label="Waste utilised" data-rules="required|number|min:0|max:1000000|decimals:2">
+                                        <small class="error"></small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="impCo2">CO₂ Avoided (tons)</label>
+                                        <input type="number" id="impCo2" placeholder="0.00" step="0.01" inputmode="decimal" data-label="CO₂ avoided" data-rules="required|number|min:0|max:1000000|decimals:2">
+                                        <small class="error"></small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="impIncidents">Burning Incidents Prevented</label>
+                                        <input type="number" id="impIncidents" placeholder="0" step="1" inputmode="numeric" data-label="Incidents prevented" data-rules="required|integer|min:0|max:100000">
+                                        <small class="error"></small>
+                                    </div>
+
+                                    <div class="form-group full">
+                                        <label for="impRemarks">Remarks (optional)</label>
+                                        <textarea id="impRemarks" rows="2" placeholder="Data source, methodology or notes" data-rules="text|maxlen:300"></textarea>
+                                        <small class="error"></small>
+                                    </div>
+
+                                </div>
+                                <div class="form-actions">
+                                    <button class="btn btn-secondary hidden" type="button" id="cancelEdit">Cancel Edit</button>
+                                    <button class="btn btn-secondary" type="reset" id="resetForm">Clear</button>
+                                    <button class="btn btn-primary" type="submit" id="submitBtn"><i class="fa-solid fa-plus"></i> Add Record</button>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+
+                    <!-- CHART -->
+
+                    <section class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Monthly Trend</div>
+                                <div class="card-subtitle" id="chartSubtitle">Last 6 months</div>
+                            </div>
+                            <select id="chartMetric" aria-label="Chart metric" data-novalidate class="metric-select">
+                                <option value="co2Avoided">CO₂ avoided (t)</option>
+                                <option value="coalSaved">Coal saved (t)</option>
+                                <option value="wasteUtilised">Waste utilised (t)</option>
+                                <option value="incidentsPrevented">Incidents prevented</option>
+                            </select>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-wrap">
+                                <div class="bar-chart" id="barChart"></div>
+                            </div>
+                            <div class="region-list" id="regionList"></div>
+                        </div>
+                    </section>
+
+                </div>
+
+                <!-- RECORDS -->
+
+                <section class="card mt-3">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Impact Records</div>
+                            <div class="card-subtitle" id="recordCount">0 records</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+
+                        <form class="toolbar filters" id="filterForm" novalidate>
+                            <select id="stateFilter" aria-label="Filter by state" data-novalidate>
+                                <option value="All">All States</option>
+                            </select>
+                            <div class="form-group filter-field">
+                                <label for="fromMonth">From</label>
+                                <input type="month" id="fromMonth" placeholder="YYYY-MM" data-label="From month" data-rules="month|notFutureMonth">
+                                <small class="error"></small>
+                            </div>
+                            <div class="form-group filter-field">
+                                <label for="toMonth">To</label>
+                                <input type="month" id="toMonth" placeholder="YYYY-MM" data-label="To month" data-rules="month|notFutureMonth|monthSameOrAfter:#fromMonth">
+                                <small class="error"></small>
+                            </div>
+                            <button class="btn btn-ghost" type="button" id="clearFilters"><i class="fa-solid fa-rotate-left"></i> Clear</button>
+                        </form>
+
+                        <div class="table-wrap">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Month</th>
+                                        <th>Region</th>
+                                        <th>Coal Saved</th>
+                                        <th>Waste Utilised</th>
+                                        <th>CO₂ Avoided</th>
+                                        <th>Incidents Prevented</th>
+                                        <th>Recorded</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="impactTable"></tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </section>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <script src="../js/common/toast.js"></script>
+    <script src="../js/common/validation.js"></script>
+    <script src="../js/common/store.js"></script>
+    <script src="../js/common/layout.js"></script>
+    <script src="../js/admin/admin-common.js"></script>
+    <script src="../js/admin/reports-monitoring.js"></script>
+
+</body>
+
+</html>

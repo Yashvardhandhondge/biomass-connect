@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing &amp; Complaints | Farmer | Biomass Connect</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/farmer/billing.css">
+</head>
+
+<body data-role="farmer" data-page="billing">
+
+    <div class="app-shell">
+
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <div class="app-main">
+
+            <header class="topbar" id="topbar"></header>
+
+            <main class="page">
+
+                <div class="page-header">
+                    <div>
+                        <h1>Billing &amp; Complaints</h1>
+                        <p class="page-subtitle">Invoices for your delivered orders and support requests.</p>
+                    </div>
+                    <div class="page-actions">
+                        <button type="button" class="btn btn-secondary" id="raiseBtn">
+                            <i class="fa-solid fa-headset"></i> Raise Complaint
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPI CARDS -->
+
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-file-invoice"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiInvoiced">₹0</div>
+                            <div class="kpi-label">Total Invoiced</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiPaid">₹0</div>
+                            <div class="kpi-label">Amount Received</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiPending">₹0</div>
+                            <div class="kpi-label">Payment Pending</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-headset"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiComplaints">0</div>
+                            <div class="kpi-label">Open Complaints</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tabs" id="pageTabs" role="tablist">
+                    <button type="button" class="tab active" data-tab="invoices" role="tab">Invoices</button>
+                    <button type="button" class="tab" data-tab="complaints" role="tab">Complaints</button>
+                </div>
+
+                <!-- INVOICES -->
+
+                <div id="panel-invoices">
+
+                    <section class="card">
+
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Invoice History</div>
+                                <div class="card-subtitle">Invoices are generated automatically when an order is delivered</div>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+
+                            <div class="toolbar">
+                                <div class="search">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="search" id="invoiceSearch" placeholder="Search by invoice, order or buyer" data-novalidate aria-label="Search invoices">
+                                </div>
+                                <select id="invoiceStatus" data-novalidate aria-label="Filter by payment status">
+                                    <option value="">All statuses</option>
+                                    <option>Paid</option>
+                                    <option>Pending</option>
+                                    <option>Overdue</option>
+                                </select>
+                            </div>
+
+                            <div class="table-wrap">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Invoice No.</th>
+                                            <th>Order ID</th>
+                                            <th>Buyer</th>
+                                            <th>Invoice Date</th>
+                                            <th>Due Date</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="invoiceTable"></tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+                <!-- COMPLAINTS -->
+
+                <div id="panel-complaints" class="hidden">
+
+                    <section class="card">
+
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Raise a Complaint</div>
+                                <div class="card-subtitle">Our support team responds within 48 hours</div>
+                            </div>
+                        </div>
+
+                        <form class="card-body" id="complaintForm" novalidate>
+
+                            <div class="form-grid cols-3">
+
+                                <div class="form-group">
+                                    <label for="complaintOrder">Related Order</label>
+                                    <select id="complaintOrder" data-label="Related order" data-rules="required"></select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="complaintCategory">Category</label>
+                                    <select id="complaintCategory" data-label="Category" data-rules="required">
+                                        <option value="">Select category</option>
+                                        <option>Payment Delay</option>
+                                        <option>Incorrect Payment Amount</option>
+                                        <option>Quality Dispute</option>
+                                        <option>Delivery / Pickup Issue</option>
+                                        <option>Order Cancellation</option>
+                                        <option>Platform / Technical Issue</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="complaintPriority">Priority</label>
+                                    <select id="complaintPriority" data-label="Priority" data-rules="required">
+                                        <option value="">Select priority</option>
+                                        <option>Low</option>
+                                        <option>Medium</option>
+                                        <option>High</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group full">
+                                    <label for="complaintSubject">Subject</label>
+                                    <input type="text" id="complaintSubject" placeholder="Short summary of the issue"
+                                           data-label="Subject" data-rules="required|text|minlen:5|maxlen:100">
+                                </div>
+
+                                <div class="form-group full">
+                                    <label for="complaintDescription">Description</label>
+                                    <textarea id="complaintDescription" rows="4" placeholder="Describe the issue in detail (min. 20 characters)"
+                                              data-label="Description" data-rules="required|text|minlen:20|maxlen:500"></textarea>
+                                    <div class="flex between">
+                                        <small class="error"></small>
+                                        <small class="form-hint" id="complaintCount">0 / 500</small>
+                                    </div>
+                                </div>
+
+                                <div class="form-group full">
+                                    <label for="complaintFile">Attachment</label>
+                                    <div class="upload-box">
+                                        <div>
+                                            <h4>Supporting document</h4>
+                                            <small>Optional · PDF, JPG or PNG · up to 5 MB</small>
+                                        </div>
+                                        <input type="file" id="complaintFile" accept=".pdf,.jpg,.jpeg,.png"
+                                               data-label="Attachment" data-rules="fileTypes:pdf,jpg,jpeg,png|maxSize:5">
+                                    </div>
+                                    <small class="error"></small>
+                                </div>
+
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" id="complaintReset">
+                                    <i class="fa-solid fa-rotate-left"></i> Reset
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-paper-plane"></i> Submit Complaint
+                                </button>
+                            </div>
+
+                        </form>
+
+                    </section>
+
+                    <section class="card">
+
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Complaint History</div>
+                                <div class="card-subtitle" id="complaintCountLabel">0 complaints</div>
+                            </div>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Complaint ID</th>
+                                        <th>Order</th>
+                                        <th>Category</th>
+                                        <th>Subject</th>
+                                        <th>Priority</th>
+                                        <th>Raised On</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="complaintTable"></tbody>
+                            </table>
+                        </div>
+
+                    </section>
+
+                </div>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <!-- INVOICE MODAL -->
+
+    <div class="modal-backdrop" id="invoiceModal">
+        <div class="modal modal-lg" role="dialog" aria-modal="true" aria-labelledby="invoiceTitle">
+            <div class="modal-header">
+                <h3 id="invoiceTitle">Invoice</h3>
+                <button type="button" class="modal-close" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="invoiceBody"></div>
+            <div class="modal-footer" id="invoiceFooter"></div>
+        </div>
+    </div>
+
+    <!-- COMPLAINT MODAL -->
+
+    <div class="modal-backdrop" id="complaintModal">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="complaintTitle">
+            <div class="modal-header">
+                <h3 id="complaintTitle">Complaint</h3>
+                <button type="button" class="modal-close" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="complaintBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-close>Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/common/toast.js"></script>
+    <script src="../js/common/validation.js"></script>
+    <script src="../js/common/store.js"></script>
+    <script src="../js/common/layout.js"></script>
+    <script src="../js/farmer/farmer-utils.js"></script>
+    <script src="../js/farmer/billing.js"></script>
+
+</body>
+
+</html>

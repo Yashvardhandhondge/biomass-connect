@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Pellet Order | Power Plant | Biomass Connect</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/powerplant/purchase-orders.css">
+</head>
+
+<body data-role="powerplant" data-page="purchase-orders">
+
+    <div class="app-shell">
+
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <div class="app-main">
+
+            <header class="topbar" id="topbar"></header>
+
+            <main class="page">
+
+                <div class="page-header">
+                    <div>
+                        <h1>Place Pellet Order</h1>
+                        <p class="page-subtitle">Order biomass pellets from a manufacturer listing and manage your purchase orders.</p>
+                    </div>
+                    <div class="page-actions">
+                        <a class="btn btn-secondary" href="marketplace.html">
+                            <i class="fa-solid fa-store"></i> Browse Marketplace
+                        </a>
+                    </div>
+                </div>
+
+                <div class="order-layout">
+
+                    <!-- ORDER FORM -->
+
+                    <section class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">New Purchase Order</div>
+                                <div class="card-subtitle">Quantity cannot exceed the listing's available stock</div>
+                            </div>
+                        </div>
+
+                        <form class="card-body" id="orderForm" novalidate>
+
+                            <input type="hidden" id="availableFrom">
+
+                            <div class="form-grid">
+
+                                <div class="form-group full">
+                                    <label for="listingSelect">Pellet Listing</label>
+                                    <select id="listingSelect" data-label="Pellet listing" data-rules="required">
+                                        <option value="">Select a pellet listing</option>
+                                    </select>
+                                    <small class="error" id="listingSelectError"></small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="supplierName">Supplier</label>
+                                    <input type="text" id="supplierName" readonly placeholder="Select a listing" data-novalidate>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="availableQty">Available Quantity (tons)</label>
+                                    <input type="text" id="availableQty" readonly placeholder="—" data-novalidate>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="quantity">Order Quantity (tons)</label>
+                                    <input type="number" id="quantity" placeholder="e.g. 50" step="0.01" data-label="Quantity"
+                                           data-rules="required|number|positive|max:10000|decimals:2">
+                                    <small class="error" id="quantityError"></small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="price">Price per Ton (₹)</label>
+                                    <input type="text" id="price" readonly placeholder="—" data-novalidate>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="deliveryDate">Required Delivery Date</label>
+                                    <input type="date" id="deliveryDate" data-label="Delivery date"
+                                           data-rules="required|date|minDate:+1|maxDate:+90|minDate:#availableFrom">
+                                    <small class="error" id="deliveryDateError"></small>
+                                    <small class="form-hint">Between tomorrow and 90 days from today.</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="total">Total Amount (₹)</label>
+                                    <input type="text" id="total" readonly placeholder="₹0" data-novalidate>
+                                </div>
+
+                                <div class="form-group full">
+                                    <label for="deliveryAddress">Delivery Address</label>
+                                    <textarea id="deliveryAddress" rows="2" placeholder="Plant gate / coal yard address with PIN code"
+                                              data-label="Delivery address" data-rules="required|text|minlen:10|maxlen:200"></textarea>
+                                    <small class="error" id="deliveryAddressError"></small>
+                                </div>
+
+                                <div class="form-group full">
+                                    <label for="notes">Notes for Supplier (optional)</label>
+                                    <textarea id="notes" rows="2" placeholder="Unloading window, packaging, quality expectations…"
+                                              data-label="Notes" data-rules="text|maxlen:500"></textarea>
+                                    <small class="error" id="notesError"></small>
+                                    <small class="form-hint" id="notesCount"></small>
+                                </div>
+
+                            </div>
+
+                            <div class="form-actions">
+                                <button class="btn btn-secondary" type="reset">Clear</button>
+                                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Place Order</button>
+                            </div>
+
+                        </form>
+                    </section>
+
+                    <!-- SELECTED LISTING SUMMARY -->
+
+                    <section class="card">
+                        <div class="card-header">
+                            <div class="card-title">Listing Specifications</div>
+                        </div>
+                        <div class="card-body" id="listingSummary">
+                            <div class="empty-state"><i class="fa-solid fa-box-open"></i>Select a listing to see its quality specifications.</div>
+                        </div>
+                    </section>
+
+                </div>
+
+                <!-- MY ORDERS -->
+
+                <section class="card mt-3" id="myOrders">
+
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">My Pellet Orders</div>
+                            <div class="card-subtitle">Pending orders can be edited or cancelled until the supplier accepts them</div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="toolbar">
+                            <div class="search">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="search" id="orderSearch" placeholder="Search by order ID, supplier or pellet type" aria-label="Search orders" data-novalidate>
+                            </div>
+                            <select id="statusFilter" aria-label="Filter by status" data-novalidate>
+                                <option value="">All statuses</option>
+                                <option>Pending</option>
+                                <option>Accepted</option>
+                                <option>In Transit</option>
+                                <option>Delivered</option>
+                                <option>Cancelled</option>
+                                <option>Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Supplier</th>
+                                    <th>Pellet Type</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    <th>Ordered On</th>
+                                    <th>Delivery By</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orderTable"></tbody>
+                        </table>
+                    </div>
+
+                </section>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <!-- VIEW ORDER MODAL -->
+
+    <div class="modal-backdrop" id="viewModal">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="viewModalTitle">
+            <div class="modal-header">
+                <h3 id="viewModalTitle">Order Details</h3>
+                <button class="modal-close" type="button" data-close-modal aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="viewModalBody"></div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-close-modal>Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT ORDER MODAL -->
+
+    <div class="modal-backdrop" id="editModal">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+            <form id="editForm" novalidate>
+                <div class="modal-header">
+                    <h3 id="editModalTitle">Edit Order</h3>
+                    <button class="modal-close" type="button" data-close-modal aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editOrderId">
+                    <input type="hidden" id="editAvailableFrom">
+                    <p class="text-muted mb-2" id="editSummary"></p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="editQuantity">Quantity (tons)</label>
+                            <input type="number" id="editQuantity" step="0.01" data-label="Quantity"
+                                   data-rules="required|number|positive|max:10000|decimals:2">
+                            <small class="error" id="editQuantityError"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="editDeliveryDate">Required Delivery Date</label>
+                            <input type="date" id="editDeliveryDate" data-label="Delivery date"
+                                   data-rules="required|date|minDate:+1|maxDate:+90|minDate:#editAvailableFrom">
+                            <small class="error" id="editDeliveryDateError"></small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="editAddress">Delivery Address</label>
+                            <textarea id="editAddress" rows="2" data-label="Delivery address"
+                                      data-rules="required|text|minlen:10|maxlen:200"></textarea>
+                            <small class="error" id="editAddressError"></small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="editNotes">Notes (optional)</label>
+                            <textarea id="editNotes" rows="2" data-label="Notes" data-rules="text|maxlen:500"></textarea>
+                            <small class="error" id="editNotesError"></small>
+                        </div>
+                        <div class="form-group full">
+                            <span class="form-hint" id="editTotal"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-close-modal>Cancel</button>
+                    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/common/toast.js"></script>
+    <script src="../js/common/validation.js"></script>
+    <script src="../js/common/store.js"></script>
+    <script src="../js/common/layout.js"></script>
+    <script src="../js/powerplant/plant.js"></script>
+    <script src="../js/powerplant/purchase-orders.js"></script>
+
+</body>
+
+</html>

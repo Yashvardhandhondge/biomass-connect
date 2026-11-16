@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Tracking | Farmer | Biomass Connect</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/farmer/tracking.css">
+</head>
+
+<body data-role="farmer" data-page="tracking">
+
+    <div class="app-shell">
+
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <div class="app-main">
+
+            <header class="topbar" id="topbar"></header>
+
+            <main class="page">
+
+                <div class="page-header">
+                    <div>
+                        <h1>Order Tracking</h1>
+                        <p class="page-subtitle">Follow accepted orders from dispatch to delivery and update their status.</p>
+                    </div>
+                    <div class="page-actions">
+                        <a class="btn btn-secondary" href="orders.html">
+                            <i class="fa-solid fa-cart-shopping"></i> Orders Received
+                        </a>
+                    </div>
+                </div>
+
+                <div class="tracking-layout">
+
+                    <!-- ORDER PICKER -->
+
+                    <section class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Orders</div>
+                                <div class="card-subtitle" id="listCount">0 orders</div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="toolbar picker-toolbar">
+                                <div class="search">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="search" id="searchInput" placeholder="Search orders" data-novalidate aria-label="Search orders">
+                                </div>
+                                <select id="viewFilter" data-novalidate aria-label="Show orders">
+                                    <option value="active">Active</option>
+                                    <option value="delivered">Delivered</option>
+                                    <option value="all">All</option>
+                                </select>
+                            </div>
+                            <div class="track-list" id="trackList"></div>
+                        </div>
+                    </section>
+
+                    <!-- TRACKING DETAIL -->
+
+                    <section class="card" id="trackDetail"></section>
+
+                </div>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <!-- DISPATCH MODAL -->
+
+    <div class="modal-backdrop" id="dispatchModal">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="dispatchTitle">
+            <div class="modal-header">
+                <h3 id="dispatchTitle">Mark as Dispatched</h3>
+                <button type="button" class="modal-close" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="dispatchForm" novalidate>
+                <div class="modal-body">
+                    <input type="hidden" id="dispatchId">
+                    <input type="hidden" id="dispatchMinDate">
+                    <div class="order-summary" id="dispatchSummary"></div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="vehicleNo">Vehicle Number</label>
+                            <input type="text" id="vehicleNo" placeholder="e.g. MH15AB4521" maxlength="13"
+                                   data-filter="upper" data-label="Vehicle number" data-rules="required|vehicle">
+                        </div>
+                        <div class="form-group">
+                            <label for="driverName">Driver Name</label>
+                            <input type="text" id="driverName" placeholder="e.g. Suresh Pawar"
+                                   data-label="Driver name" data-rules="required|name">
+                        </div>
+                        <div class="form-group">
+                            <label for="driverMobile">Driver Mobile</label>
+                            <input type="tel" id="driverMobile" inputmode="numeric" placeholder="10-digit mobile"
+                                   data-label="Driver mobile" data-rules="required|mobile">
+                        </div>
+                        <div class="form-group">
+                            <label for="dispatchDate">Dispatch Date</label>
+                            <input type="date" id="dispatchDate" data-label="Dispatch date"
+                                   data-rules="required|date|notFuture|minDate:#dispatchMinDate">
+                            <small class="form-hint" id="dispatchHint">Today or earlier, not before acceptance</small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="dispatchExpected">Expected Delivery Date</label>
+                            <input type="date" id="dispatchExpected" data-label="Expected delivery date"
+                                   data-rules="required|date|notPast|after:#dispatchDate|maxDate:+60">
+                            <small class="form-hint">Must be after the dispatch date and within 60 days</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-close>Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-truck-fast"></i> Confirm Dispatch</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/common/toast.js"></script>
+    <script src="../js/common/validation.js"></script>
+    <script src="../js/common/store.js"></script>
+    <script src="../js/common/layout.js"></script>
+    <script src="../js/farmer/farmer-utils.js"></script>
+    <script src="../js/farmer/tracking.js"></script>
+
+</body>
+
+</html>

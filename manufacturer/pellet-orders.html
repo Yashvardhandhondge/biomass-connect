@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pellet Orders | Manufacturer | Biomass Connect</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/manufacturer/pellet-orders.css">
+</head>
+
+<body data-role="manufacturer" data-page="pellet-orders">
+
+    <div class="app-shell">
+
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <div class="app-main">
+
+            <header class="topbar" id="topbar"></header>
+
+            <main class="page">
+
+                <div class="page-header">
+                    <div>
+                        <h1>Pellet Orders Received</h1>
+                        <p class="page-subtitle">Review orders from power plants and accept or reject them.</p>
+                    </div>
+                    <div class="page-actions">
+                        <a class="btn btn-secondary" href="pellet-tracking.html">
+                            <i class="fa-solid fa-route"></i> Track Dispatches
+                        </a>
+                    </div>
+                </div>
+
+                <section class="card">
+
+                    <div class="card-body" style="padding-bottom:0">
+                        <div class="tabs" id="statusTabs" style="margin-bottom:16px"></div>
+                        <div class="toolbar">
+                            <div class="search">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="search" id="searchInput" placeholder="Search by order ID, power plant or pellet type" data-novalidate>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Power Plant</th>
+                                    <th>Pellets</th>
+                                    <th>Quantity</th>
+                                    <th>Amount</th>
+                                    <th>Order Date</th>
+                                    <th>Requested Delivery</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orderTable"></tbody>
+                        </table>
+                    </div>
+
+                </section>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <!-- VIEW MODAL -->
+
+    <div class="modal-backdrop" id="viewModal">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="viewTitle">
+            <div class="modal-header">
+                <h3 id="viewTitle">Order details</h3>
+                <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="viewBody"></div>
+            <div class="modal-footer" id="viewFooter">
+                <button type="button" class="btn btn-secondary" data-close>Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACCEPT MODAL -->
+
+    <div class="modal-backdrop" id="acceptModal">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="acceptTitle">
+            <div class="modal-header">
+                <h3 id="acceptTitle">Accept order</h3>
+                <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="acceptForm" novalidate>
+                <div class="modal-body">
+                    <p class="text-muted mb-2" id="acceptInfo"></p>
+                    <div class="form-grid">
+                        <div class="form-group full">
+                            <label for="expectedDelivery">Expected Delivery Date</label>
+                            <input type="date" id="expectedDelivery" data-label="Expected delivery date"
+                                   data-rules="required|date|notPast|maxDate:+90">
+                            <small class="form-hint" id="requestedHint"></small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="acceptNote">Note to Power Plant <span class="text-subtle">(optional)</span></label>
+                            <textarea id="acceptNote" rows="3" placeholder="Dispatch plan, packaging, contact person..."
+                                      data-label="Note" data-rules="text|maxlen:300"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-close>Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Accept Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- REJECT MODAL -->
+
+    <div class="modal-backdrop" id="rejectModal">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rejectTitle">
+            <div class="modal-header">
+                <h3 id="rejectTitle">Reject order</h3>
+                <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="rejectForm" novalidate>
+                <div class="modal-body">
+                    <p class="text-muted mb-2" id="rejectInfo"></p>
+                    <div class="form-grid">
+                        <div class="form-group full">
+                            <label for="rejectReason">Reason</label>
+                            <select id="rejectReason" data-label="Reason" data-rules="required">
+                                <option value="">Select a reason</option>
+                                <option>Insufficient stock</option>
+                                <option>Delivery date not feasible</option>
+                                <option>Delivery location not serviceable</option>
+                                <option>Price or payment terms mismatch</option>
+                                <option>Requested specification not available</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group full">
+                            <label for="rejectDetails">Details</label>
+                            <textarea id="rejectDetails" rows="3" placeholder="Explain the reason so the power plant can plan accordingly"
+                                      data-label="Details" data-rules="required|text|minlen:10|maxlen:300"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-close>Cancel</button>
+                    <button type="submit" class="btn btn-danger"><i class="fa-solid fa-xmark"></i> Reject Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/common/toast.js"></script>
+    <script src="../js/common/validation.js"></script>
+    <script src="../js/common/store.js"></script>
+    <script src="../js/common/layout.js"></script>
+    <script src="../js/manufacturer/pellet-orders.js"></script>
+
+</body>
+
+</html>

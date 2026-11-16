@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pellet Sales History | Manufacturer | Biomass Connect</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/manufacturer/history.css">
+</head>
+
+<body data-role="manufacturer" data-page="pellet-sales">
+
+    <div class="app-shell">
+
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <div class="app-main">
+
+            <header class="topbar" id="topbar"></header>
+
+            <main class="page">
+
+                <div class="page-header">
+                    <div>
+                        <h1>Pellet Sales History</h1>
+                        <p class="page-subtitle">Delivered pellet orders and the revenue they generated.</p>
+                    </div>
+                    <div class="page-actions">
+                        <button type="button" class="btn btn-primary" id="exportBtn">
+                            <i class="fa-solid fa-file-csv"></i> Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-weight-hanging"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiTons">0 t</div>
+                            <div class="kpi-label">Pellets Sold</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiRevenue">₹0</div>
+                            <div class="kpi-label">Revenue</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-bolt"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiBuyers">0</div>
+                            <div class="kpi-label">Power Plant Buyers</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiAvg">₹0</div>
+                            <div class="kpi-label">Avg. Price / Ton</div>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Delivered Orders</div>
+                            <div class="card-subtitle" id="resultCount">0 sales</div>
+                        </div>
+                    </div>
+
+                    <div class="card-body filter-body">
+                        <form id="filterForm" class="filter-grid" novalidate>
+                            <div class="form-group">
+                                <label for="fromDate">From Date</label>
+                                <input type="date" id="fromDate" data-label="From date" data-rules="date|notFuture">
+                            </div>
+                            <div class="form-group">
+                                <label for="toDate">To Date</label>
+                                <input type="date" id="toDate" data-label="To date" data-rules="date|notFuture|sameOrAfter:#fromDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="buyerFilter">Buyer</label>
+                                <select id="buyerFilter" data-novalidate>
+                                    <option value="">All buyers</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="typeFilter">Pellet Type</label>
+                                <select id="typeFilter" data-novalidate>
+                                    <option value="">All types</option>
+                                </select>
+                            </div>
+                            <div class="filter-actions">
+                                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-filter"></i> Apply</button>
+                                <button type="button" class="btn btn-secondary" id="resetBtn">Reset</button>
+                            </div>
+                        </form>
+                        <p class="form-hint">Date range filters on the delivery date.</p>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Power Plant</th>
+                                    <th>Pellet Type</th>
+                                    <th>Grade</th>
+                                    <th>Quantity</th>
+                                    <th>Price / Ton</th>
+                                    <th>Amount</th>
+                                    <th>Delivered On</th>
+                                </tr>
+                            </thead>
+                            <tbody id="salesTable"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <div class="grid-2 mt-3">
+                    <section class="card">
+                        <div class="card-header">
+                            <div class="card-title">Revenue by Buyer</div>
+                        </div>
+                        <div class="card-body stack" id="buyerBreakdown"></div>
+                    </section>
+                    <section class="card">
+                        <div class="card-header">
+                            <div class="card-title">Volume by Pellet Type</div>
+                        </div>
+                        <div class="card-body stack" id="typeBreakdown"></div>
+                    </section>
+                </div>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <script src="../js/common/toast.js"></script>
+    <script src="../js/common/validation.js"></script>
+    <script src="../js/common/store.js"></script>
+    <script src="../js/common/layout.js"></script>
+    <script src="../js/manufacturer/pellet-sales.js"></script>
+
+</body>
+
+</html>

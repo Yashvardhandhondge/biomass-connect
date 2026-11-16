@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dispute Management | Admin | Biomass Connect</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/admin/dispute-management.css">
+</head>
+
+<body data-role="admin" data-page="dispute-management">
+
+    <div class="app-shell">
+
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <div class="app-main">
+
+            <header class="topbar" id="topbar"></header>
+
+            <main class="page">
+
+                <div class="page-header">
+                    <div>
+                        <h1>Dispute Management</h1>
+                        <p class="page-subtitle">Investigate and resolve disputes between farmers, manufacturers and power plants.</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" type="button" id="exportBtn">
+                            <i class="fa-solid fa-file-export"></i> Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPI CARDS -->
+
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiOpen">0</div>
+                            <div class="kpi-label">Open</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiReview">0</div>
+                            <div class="kpi-label">In Review</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiResolved">0</div>
+                            <div class="kpi-label">Resolved</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiRefunds">₹0</div>
+                            <div class="kpi-label">Refunds / Penalties Settled</div>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="card">
+                    <div class="card-body">
+
+                        <div class="tabs" id="statusTabs" role="tablist">
+                            <button class="tab active" type="button" data-status="All">All (<span class="count">0</span>)</button>
+                            <button class="tab" type="button" data-status="Open">Open (<span class="count">0</span>)</button>
+                            <button class="tab" type="button" data-status="In Review">In Review (<span class="count">0</span>)</button>
+                            <button class="tab" type="button" data-status="Resolved">Resolved (<span class="count">0</span>)</button>
+                        </div>
+
+                        <div class="toolbar">
+                            <div class="search">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="search" id="searchInput" placeholder="Search dispute ID, order ID or participant" aria-label="Search disputes" data-novalidate>
+                            </div>
+                            <select id="categoryFilter" aria-label="Filter by category" data-novalidate>
+                                <option value="All">All Categories</option>
+                                <option>Quality Issue</option>
+                                <option>Quantity Mismatch</option>
+                                <option>Delayed Delivery</option>
+                                <option>Payment Delay</option>
+                            </select>
+                            <select id="priorityFilter" aria-label="Filter by priority" data-novalidate>
+                                <option value="All">All Priorities</option>
+                                <option>High</option>
+                                <option>Medium</option>
+                                <option>Low</option>
+                            </select>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Dispute</th>
+                                        <th>Raised By</th>
+                                        <th>Against</th>
+                                        <th>Order</th>
+                                        <th>Category</th>
+                                        <th>Priority</th>
+                                        <th>Raised On</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="disputeTable"></tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </section>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <!-- VIEW DISPUTE MODAL -->
+
+    <div class="modal-backdrop" id="viewModal" aria-hidden="true">
+        <div class="modal modal-lg" role="dialog" aria-modal="true" aria-labelledby="viewTitle">
+            <div class="modal-header">
+                <h3 id="viewTitle">Dispute</h3>
+                <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="viewBody"></div>
+            <div class="modal-footer" id="viewFooter"></div>
+        </div>
+    </div>
+
+    <!-- ASSIGN MODAL -->
+
+    <div class="modal-backdrop" id="assignModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="assignTitle">
+            <div class="modal-header">
+                <h3 id="assignTitle">Assign Dispute</h3>
+                <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="assignForm" novalidate>
+                <div class="modal-body">
+                    <p class="text-muted mb-2" id="assignIntro"></p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="assignee">Assign To</label>
+                            <select id="assignee" data-rules="required">
+                                <option value="">Select team member</option>
+                                <option>Anita Desai (Operations)</option>
+                                <option>Rahul Mehta (Quality)</option>
+                                <option>Rahul Mehta (Finance)</option>
+                                <option>Priya Nair (Logistics)</option>
+                                <option value="self">Myself</option>
+                            </select>
+                            <small class="error"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="assignPriority">Priority</label>
+                            <select id="assignPriority" data-rules="required">
+                                <option value="">Select priority</option>
+                                <option>High</option>
+                                <option>Medium</option>
+                                <option>Low</option>
+                            </select>
+                            <small class="error"></small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="assignNote">Instructions (optional)</label>
+                            <textarea id="assignNote" rows="3" placeholder="e.g. Collect the weighbridge slip and lab report from both parties" data-rules="text|minlen:5|maxlen:300"></textarea>
+                            <small class="error"></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-close>Cancel</button>
+                    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-user-check"></i> Assign &amp; Mark In Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- RESOLVE MODAL -->
+
+    <div class="modal-backdrop" id="resolveModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="resolveTitle">
+            <div class="modal-header">
+                <h3 id="resolveTitle">Resolve Dispute</h3>
+                <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="resolveForm" novalidate>
+                <div class="modal-body">
+                    <p class="text-muted mb-2" id="resolveIntro"></p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="resolutionType">Resolution Type</label>
+                            <select id="resolutionType" data-rules="required">
+                                <option value="">Select resolution</option>
+                                <option>Full refund to buyer</option>
+                                <option>Partial refund to buyer</option>
+                                <option>Penalty on seller</option>
+                                <option>Replacement shipment</option>
+                                <option>Payment released to seller</option>
+                                <option>Mutual settlement</option>
+                                <option>Dismissed – no fault found</option>
+                            </select>
+                            <small class="error"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="refundAmount">Refund / Penalty Amount (₹)</label>
+                            <input type="number" id="refundAmount" placeholder="0.00" inputmode="decimal" step="0.01" data-label="Refund amount" data-rules="number|min:0|decimals:2">
+                            <small class="form-hint" id="refundHint">Optional</small>
+                            <small class="error"></small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="resolutionNotes">Resolution Notes</label>
+                            <textarea id="resolutionNotes" rows="4" placeholder="Summarise the findings and the decision (min. 10 characters)" data-rules="required|text|minlen:10|maxlen:500"></textarea>
+                            <small class="form-hint">Both parties will receive these notes.</small>
+                            <small class="error"></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-close>Cancel</button>
+                    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-gavel"></i> Resolve Dispute</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/common/toast.js"></script>
+    <script src="../js/common/validation.js"></script>
+    <script src="../js/common/store.js"></script>
+    <script src="../js/common/layout.js"></script>
+    <script src="../js/admin/admin-common.js"></script>
+    <script src="../js/admin/dispute-management.js"></script>
+
+</body>
+
+</html>

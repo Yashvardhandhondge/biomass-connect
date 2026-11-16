@@ -1,0 +1,102 @@
+/* Admin reports & monitoring — page-specific layout only.
+   Shared components live in ../theme.css */
+
+.reports-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.reports-grid .card + .card {
+    margin-top: 0;
+}
+
+#entryCard.is-editing {
+    border-color: var(--primary-border);
+    box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+tr.is-editing td {
+    background: var(--primary-softer);
+}
+
+.metric-select {
+    width: auto;
+    height: 34px;
+    font-size: 13px;
+}
+
+/* bar chart: room for month labels + value labels */
+.chart-wrap {
+    padding: 22px 4px 28px;
+}
+
+.bar-chart .bar b {
+    position: absolute;
+    top: -18px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.region-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.region-list:empty {
+    display: none;
+}
+
+.region-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+/* inline month filters inside the toolbar */
+.filter-field {
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-field label {
+    margin: 0;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.filter-field input {
+    width: auto;
+    min-width: 170px;
+}
+
+.filter-field .error {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    white-space: nowrap;
+    margin-top: 2px;
+}
+
+.filters {
+    row-gap: 22px;
+}
+
+@media (max-width: 1100px) {
+    .reports-grid {
+        grid-template-columns: 1fr;
+    }
+}

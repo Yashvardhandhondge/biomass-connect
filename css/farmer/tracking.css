@@ -1,0 +1,117 @@
+/* Farmer — Order Tracking: page-specific layout only.
+   Shared components (stepper, timeline, detail-list, modal) live in ../theme.css */
+
+.tracking-layout {
+    display: grid;
+    grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.tracking-layout > .card + .card {
+    margin-top: 0;
+}
+
+.picker-toolbar .search {
+    min-width: 0;
+}
+
+.picker-toolbar select {
+    min-width: 110px;
+}
+
+.track-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 560px;
+    overflow-y: auto;
+}
+
+.track-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+    padding: 12px 14px;
+    text-align: left;
+    font: inherit;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+}
+
+.track-item:hover {
+    border-color: var(--primary-border);
+    background: var(--primary-softer);
+}
+
+.track-item.active {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+}
+
+.track-item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.track-item-meta {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.track-item small {
+    font-size: 12px;
+}
+
+.eta {
+    margin: 14px 0 20px;
+    font-size: 14px;
+}
+
+.track-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(220px, 2fr);
+    gap: 28px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+}
+
+.timeline-title {
+    font-size: 14px;
+    margin-bottom: 14px;
+}
+
+.detail-list .span-full {
+    grid-column: 1 / -1;
+}
+
+.order-summary {
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    border-radius: var(--radius-sm);
+    background: var(--primary-softer);
+    border: 1px solid var(--primary-border);
+    font-size: 14px;
+}
+
+@media (max-width: 1100px) {
+    .tracking-layout,
+    .track-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tracking-layout > .card + .card {
+        margin-top: 0;
+    }
+
+    .track-list {
+        max-height: 320px;
+    }
+}

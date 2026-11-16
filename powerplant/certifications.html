@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certifications | Power Plant | Biomass Connect</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/powerplant/certifications.css">
+</head>
+
+<body data-role="powerplant" data-page="certifications">
+
+    <div class="app-shell">
+
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <div class="app-main">
+
+            <header class="topbar" id="topbar"></header>
+
+            <main class="page">
+
+                <div class="page-header">
+                    <div>
+                        <h1>Certifications</h1>
+                        <p class="page-subtitle">Compliance certificates for biomass co-firing, environmental clearance and renewable energy credits.</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-primary" type="button" id="addCertBtn">
+                            <i class="fa-solid fa-plus"></i> Add Certificate
+                        </button>
+                    </div>
+                </div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-certificate"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiTotal">0</div>
+                            <div class="kpi-label">Certificates</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiValid">0</div>
+                            <div class="kpi-label">Valid</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-hourglass-end"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiExpiring">0</div>
+                            <div class="kpi-label">Expiring in 60 Days</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiExpired">0</div>
+                            <div class="kpi-label">Expired</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CO-FIRING COMPLIANCE -->
+
+                <section class="card mb-3">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Biomass Co-firing Compliance</div>
+                            <div class="card-subtitle">Ministry of Power policy mandates blending biomass pellets with coal in thermal power plants</div>
+                        </div>
+                        <span id="complianceBadge"></span>
+                    </div>
+                    <div class="card-body compliance-grid">
+                        <div>
+                            <div class="compliance-figure"><strong id="achievedRatio">0%</strong><span class="text-muted" id="targetRatio"></span></div>
+                            <div class="progress"><span id="complianceBar" style="width:0%"></span></div>
+                            <p class="form-hint" id="complianceHint"></p>
+                        </div>
+                        <dl class="detail-list" id="complianceStats"></dl>
+                    </div>
+                </section>
+
+                <!-- CERTIFICATES TABLE -->
+
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Compliance Certificates</div>
+                            <div class="card-subtitle">Status is calculated from the expiry date</div>
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Certificate</th>
+                                    <th>Certificate No.</th>
+                                    <th>Issued By</th>
+                                    <th>Issue Date</th>
+                                    <th>Expiry Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="certTable"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <div class="cert-grid mt-3">
+
+                    <!-- RENEWAL REQUEST -->
+
+                    <section class="card" id="renewalCard">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Request Certificate Renewal</div>
+                                <div class="card-subtitle">Sent to the issuing authority through the admin team</div>
+                            </div>
+                        </div>
+                        <form class="card-body" id="renewalForm" novalidate>
+                            <div class="form-grid">
+                                <div class="form-group full">
+                                    <label for="renewCert">Certificate</label>
+                                    <select id="renewCert" data-label="Certificate" data-rules="required">
+                                        <option value="">Select certificate</option>
+                                    </select>
+                                    <small class="error" id="renewCertError"></small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="renewDate">Preferred Inspection / Renewal Date</label>
+                                    <input type="date" id="renewDate" data-label="Preferred date"
+                                           data-rules="required|date|notPast|maxDate:+180">
+                                    <small class="error" id="renewDateError"></small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="renewContact">Contact Person</label>
+                                    <input type="text" id="renewContact" placeholder="Name of the plant representative" data-label="Contact person"
+                                           data-rules="required|name">
+                                    <small class="error" id="renewContactError"></small>
+                                </div>
+                                <div class="form-group full">
+                                    <label for="renewReason">Reason / Remarks</label>
+                                    <textarea id="renewReason" rows="3" placeholder="e.g. Certificate expires next month; co-firing data for the year is attached"
+                                              data-label="Reason" data-rules="required|text|minlen:10|maxlen:500"></textarea>
+                                    <small class="error" id="renewReasonError"></small>
+                                    <small class="form-hint" id="reasonCount"></small>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn btn-secondary" type="reset">Clear</button>
+                                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Submit Request</button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <!-- RENEWAL REQUESTS -->
+
+                    <section class="card">
+                        <div class="card-header">
+                            <div class="card-title">Renewal Requests</div>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Request</th>
+                                        <th>Certificate</th>
+                                        <th>Preferred Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="requestTable"></tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                </div>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <!-- VIEW CERTIFICATE MODAL -->
+
+    <div class="modal-backdrop" id="viewModal">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="viewModalTitle">
+            <div class="modal-header">
+                <h3 id="viewModalTitle">Certificate</h3>
+                <button class="modal-close" type="button" data-close-modal aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="viewModalBody"></div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-close-modal>Close</button>
+                <button class="btn btn-primary" type="button" id="viewModalDownload"><i class="fa-solid fa-download"></i> Download</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD CERTIFICATE MODAL -->
+
+    <div class="modal-backdrop" id="addModal">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="addModalTitle">
+            <form id="addForm" novalidate>
+                <div class="modal-header">
+                    <h3 id="addModalTitle">Add Certificate</h3>
+                    <button class="modal-close" type="button" data-close-modal aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group full">
+                            <label for="certType">Certificate Type</label>
+                            <select id="certType" data-label="Certificate type" data-rules="required">
+                                <option value="">Select type</option>
+                                <option>Biomass Co-firing Compliance</option>
+                                <option>Environmental Clearance</option>
+                                <option>Consent to Operate</option>
+                                <option>Renewable Energy Certificate</option>
+                                <option>ISO 14001 Environmental Management</option>
+                                <option>Other</option>
+                            </select>
+                            <small class="error" id="certTypeError"></small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="certName">Certificate Name</label>
+                            <input type="text" id="certName" placeholder="e.g. Co-firing Compliance Certificate FY 2026-27" data-label="Certificate name"
+                                   data-rules="required|text|minlen:5|maxlen:100">
+                            <small class="error" id="certNameError"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="certNumber">Certificate Number</label>
+                            <input type="text" id="certNumber" placeholder="e.g. MPCB/CTO/2026/1182" data-label="Certificate number"
+                                   data-rules="required|batch" data-filter="upper">
+                            <small class="error" id="certNumberError"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="certAuthority">Issuing Authority</label>
+                            <input type="text" id="certAuthority" placeholder="e.g. Maharashtra Pollution Control Board" data-label="Issuing authority"
+                                   data-rules="required|text|minlen:2|maxlen:100">
+                            <small class="error" id="certAuthorityError"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="issueDate">Issue Date</label>
+                            <input type="date" id="issueDate" data-label="Issue date" data-rules="required|date|notFuture">
+                            <small class="error" id="issueDateError"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="expiryDate">Expiry Date</label>
+                            <input type="date" id="expiryDate" data-label="Expiry date" data-rules="required|date|after:#issueDate|maxDate:+3650">
+                            <small class="error" id="expiryDateError"></small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="certFile">Certificate File</label>
+                            <input type="file" id="certFile" accept=".pdf,.jpg,.jpeg,.png" data-label="Certificate file"
+                                   data-rules="required|fileTypes:pdf,jpg,jpeg,png|maxSize:5">
+                            <small class="error" id="certFileError"></small>
+                            <small class="form-hint">PDF, JPG or PNG up to 5 MB</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-close-modal>Cancel</button>
+                    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-upload"></i> Save Certificate</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/common/toast.js"></script>
+    <script src="../js/common/validation.js"></script>
+    <script src="../js/common/store.js"></script>
+    <script src="../js/common/layout.js"></script>
+    <script src="../js/powerplant/plant.js"></script>
+    <script src="../js/powerplant/certifications.js"></script>
+
+</body>
+
+</html>

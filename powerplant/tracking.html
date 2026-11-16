@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Active Orders | Power Plant | Biomass Connect</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/powerplant/tracking.css">
+</head>
+
+<body data-role="powerplant" data-page="tracking">
+
+    <div class="app-shell">
+
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <div class="app-main">
+
+            <header class="topbar" id="topbar"></header>
+
+            <main class="page">
+
+                <div class="page-header">
+                    <div>
+                        <h1>Active Orders</h1>
+                        <p class="page-subtitle">Track pending, accepted and in-transit pellet orders and confirm receipt on delivery.</p>
+                    </div>
+                    <div class="page-actions">
+                        <a class="btn btn-secondary" href="history.html">
+                            <i class="fa-solid fa-clock-rotate-left"></i> Purchase History
+                        </a>
+                    </div>
+                </div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiPending">0</div>
+                            <div class="kpi-label">Awaiting Confirmation</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiAccepted">0</div>
+                            <div class="kpi-label">Accepted by Supplier</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiTransit">0</div>
+                            <div class="kpi-label">In Transit</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-weight-hanging"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiTons">0 t</div>
+                            <div class="kpi-label">Pellets on Order</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tracking-grid">
+
+                    <!-- ORDER LIST -->
+
+                    <section class="card">
+                        <div class="card-header">
+                            <div class="card-title">Orders</div>
+                        </div>
+                        <div class="card-body list-body">
+                            <div class="tabs" id="statusTabs">
+                                <button type="button" class="tab active" data-status="">All</button>
+                                <button type="button" class="tab" data-status="Pending">Pending</button>
+                                <button type="button" class="tab" data-status="Accepted">Accepted</button>
+                                <button type="button" class="tab" data-status="In Transit">In Transit</button>
+                            </div>
+                            <div class="order-list" id="orderList"></div>
+                        </div>
+                    </section>
+
+                    <!-- ORDER DETAIL -->
+
+                    <section class="card" id="detailCard">
+                        <div class="empty-state"><i class="fa-solid fa-truck-fast"></i>Select an order to view its tracking details.</div>
+                    </section>
+
+                </div>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <!-- CONFIRM RECEIPT MODAL -->
+
+    <div class="modal-backdrop" id="receiptModal">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="receiptModalTitle">
+            <form id="receiptForm" novalidate>
+                <div class="modal-header">
+                    <h3 id="receiptModalTitle">Confirm Receipt</h3>
+                    <button class="modal-close" type="button" data-close-modal aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="receiptOrderId">
+                    <input type="hidden" id="receiptOrderDate">
+                    <p class="text-muted mb-2" id="receiptSummary"></p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="receiptDate">Receipt Date</label>
+                            <input type="date" id="receiptDate" data-label="Receipt date"
+                                   data-rules="required|date|notFuture|minDate:#receiptOrderDate"
+                                   data-msg-min-date="Receipt date cannot be before the order date">
+                            <small class="error" id="receiptDateError"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="receivedQty">Quantity Received (tons)</label>
+                            <input type="number" id="receivedQty" step="0.01" data-label="Quantity received"
+                                   data-rules="required|number|positive|decimals:2|max:10000">
+                            <small class="error" id="receivedQtyError"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="receiptVehicle">Vehicle Number</label>
+                            <input type="text" id="receiptVehicle" placeholder="e.g. MH15GH1122" data-label="Vehicle number"
+                                   data-rules="required|vehicle" data-filter="upper" maxlength="14">
+                            <small class="error" id="receiptVehicleError"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="receiptCondition">Condition on Arrival</label>
+                            <select id="receiptCondition" data-label="Condition on arrival" data-rules="required">
+                                <option value="">Select condition</option>
+                                <option>Good — dry and intact</option>
+                                <option>Minor fines / breakage</option>
+                                <option>Moisture damage</option>
+                                <option>Damaged packaging</option>
+                            </select>
+                            <small class="error" id="receiptConditionError"></small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="receiptRemarks">Remarks (optional)</label>
+                            <textarea id="receiptRemarks" rows="2" placeholder="Weighbridge slip no., unloading notes…"
+                                      data-label="Remarks" data-rules="text|maxlen:300"></textarea>
+                            <small class="error" id="receiptRemarksError"></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-close-modal>Cancel</button>
+                    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-check"></i> Confirm Receipt</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/common/toast.js"></script>
+    <script src="../js/common/validation.js"></script>
+    <script src="../js/common/store.js"></script>
+    <script src="../js/common/layout.js"></script>
+    <script src="../js/powerplant/plant.js"></script>
+    <script src="../js/powerplant/tracking.js"></script>
+
+</body>
+
+</html>

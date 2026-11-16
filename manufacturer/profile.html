@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Manufacturer Profile</title>
+
+    <link rel="stylesheet"
+          href="../css/manufacturer/profile.css">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="profile-card">
+
+            <div class="header">
+
+                <h1>Manufacturer Profile</h1>
+
+                <button
+                    onclick="window.location.href='dashboard.html'">
+
+                    Back to Dashboard
+
+                </button>
+
+            </div>
+
+            <div class="profile-icon">
+
+                <i class="fa-solid fa-industry"></i>
+
+            </div>
+
+            <div class="form-grid">
+
+                <div class="input-group">
+
+                    <label>Company Name</label>
+
+                    <input
+                        type="text"
+                        id="companyName">
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>Contact Person</label>
+
+                    <input
+                        type="text"
+                        id="contactPerson">
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>Email</label>
+
+                    <input
+                        type="email"
+                        id="email">
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>Mobile</label>
+
+                    <input
+                        type="text"
+                        id="mobile">
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>GST Number</label>
+
+                    <input
+                        type="text"
+                        id="gstNumber">
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>Factory License No.</label>
+
+                    <input
+                        type="text"
+                        id="licenseNumber">
+
+                </div>
+
+                <div class="input-group full-width">
+
+                    <label>Factory Address</label>
+
+                    <textarea
+                        id="address"></textarea>
+
+                </div>
+
+            </div>
+
+            <button
+                class="save-btn"
+                onclick="saveProfile()">
+
+                Save Profile
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <script src="../js/manufacturer/profile.js"></script>
+
+</body>
+
+</html>
