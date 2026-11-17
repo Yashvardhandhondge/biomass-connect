@@ -1351,6 +1351,36 @@ table tbody tr:hover td {
     font-weight: 500;
 }
 
+.detail-list .span-full {
+    grid-column: 1 / -1;
+}
+
+/* ================= MANUFACTURER RATING ================= */
+
+.rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #b45309;
+    white-space: nowrap;
+}
+
+.rating i {
+    color: #f59e0b;
+}
+
+.rating small {
+    font-weight: 400;
+    color: var(--text-subtle);
+}
+
+.rating-new {
+    color: var(--text-subtle);
+    font-weight: 500;
+}
+
 /* ================= EMPTY STATE ================= */
 
 .empty-state {

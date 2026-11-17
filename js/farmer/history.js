@@ -1,9 +1,8 @@
 // =========================
 // FARMER — ORDER HISTORY (US013)
-// Closed orders (Delivered / Rejected / Cancelled) with date-range filter + CSV export
+// Delivered orders with a date-range filter and sales summary
 // =========================
 
-const CLOSED_STATUSES = ["Delivered", "Rejected", "Cancelled"];
 let currentRows = [];
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -12,7 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const to = document.getElementById("toDate");
 
     document.getElementById("searchInput").addEventListener("input", render);
-    document.getElementById("statusFilter").addEventListener("change", render);
 
     // re-filter as soon as the date range is valid
     [from, to].forEach(el => el.addEventListener("change", () => {
@@ -39,16 +37,13 @@ document.addEventListener("DOMContentLoaded", () => {
         showToast("Filters cleared", "info");
     });
 
-    document.getElementById("exportBtn").addEventListener("click", exportCsv);
-
     render();
 });
 
 /* ---------- Data ---------- */
 
-function closedOn(o) {
-    return o.deliveredDate || o.rejectedDate || o.cancelledDate ||
-        (o.status === "Delivered" ? (o.expectedDelivery || o.deliveryDate) : o.orderDate) || "";
+function deliveredOrders() {
+    return Farmer.orders().filter(o => o.status === "Delivered");
 }
 
 function rangeText() {
@@ -62,18 +57,15 @@ function rangeText() {
 
 function filteredOrders() {
     const q = document.getElementById("searchInput").value.trim().toLowerCase();
-    const status = document.getElementById("statusFilter").value;
     const from = document.getElementById("fromDate").value;
     const to = document.getElementById("toDate").value;
 
-    return Farmer.orders()
-        .filter(o => CLOSED_STATUSES.includes(o.status))
+    return deliveredOrders()
         .filter(o =>
-            (!status || o.status === status) &&
             (!from || o.orderDate >= from) &&
             (!to || o.orderDate <= to) &&
             (!q || [o.id, o.manufacturer, o.biomassType].join(" ").toLowerCase().includes(q)))
-        .sort((a, b) => String(closedOn(b)).localeCompare(String(closedOn(a))));
+        .sort((a, b) => String(b.deliveredDate || "").localeCompare(String(a.deliveredDate || "")));
 }
 
 /* ---------- Rendering ---------- */
@@ -89,9 +81,8 @@ function render() {
     const table = document.getElementById("historyTable");
 
     if (!currentRows.length) {
-        const anyClosed = Farmer.orders().some(o => CLOSED_STATUSES.includes(o.status));
         table.innerHTML = Farmer.emptyRow(9, "fa-clock-rotate-left",
-            anyClosed ? "No orders match the selected filters." : "No completed orders yet. Delivered and rejected orders will appear here.");
+            deliveredOrders().length ? "No orders match the selected filters." : "No delivered orders yet. They will appear here once delivered.");
         return;
     }
 
@@ -104,42 +95,17 @@ function render() {
             <td>${Store.inr(o.price)}</td>
             <td>${Store.inr(o.total)}</td>
             <td>${Store.date(o.orderDate)}</td>
-            <td>${Store.date(closedOn(o))}</td>
-            <td>${Farmer.badge(o.status)}${o.rejectReason ? `<div class="text-subtle cell-sub" title="${Store.esc(o.rejectReason)}">${Store.esc(o.rejectCategory || "See reason")}</div>` : ""}</td>
+            <td>${Store.date(o.deliveredDate)}</td>
+            <td>${Store.statusBadge(o.paymentStatus || "Pending")}</td>
         </tr>`).join("");
 }
 
 function renderKpis(rows) {
-    const delivered = rows.filter(o => o.status === "Delivered");
-    const tons = delivered.reduce((s, o) => s + Number(o.quantity || 0), 0);
-    const revenue = delivered.reduce((s, o) => s + Number(o.total || 0), 0);
+    const tons = rows.reduce((s, o) => s + Number(o.quantity || 0), 0);
+    const revenue = rows.reduce((s, o) => s + Number(o.total || 0), 0);
 
     document.getElementById("kpiOrders").textContent = rows.length;
     document.getElementById("kpiTons").textContent = tons.toLocaleString("en-IN", { maximumFractionDigits: 2 });
     document.getElementById("kpiRevenue").textContent = Store.inr(revenue);
     document.getElementById("kpiAvg").textContent = tons ? Store.inr(Math.round(revenue / tons)) : "₹0";
-}
-
-/* ---------- Export ---------- */
-
-function exportCsv() {
-
-    if (!Validator.validateForm("#filterForm")) return;
-
-    render();
-
-    if (!currentRows.length) {
-        showToast("There are no orders to export for the selected filters", "warning");
-        return;
-    }
-
-    const rows = [["Order ID", "Manufacturer", "Biomass", "Quantity (Tons)", "Price per Ton (INR)", "Amount (INR)", "Order Date", "Closed On", "Status", "Reason"]]
-        .concat(currentRows.map(o => [
-            o.id, o.manufacturer, o.biomassType, o.quantity, o.price, o.total,
-            o.orderDate, closedOn(o), o.status, o.rejectReason || ""
-        ]));
-
-    const filename = "order-history-" + Farmer.today() + ".csv";
-    Farmer.download(filename, "﻿" + Farmer.toCsv(rows), "text/csv;charset=utf-8");
-    showToast("Exported " + currentRows.length + " order" + (currentRows.length === 1 ? "" : "s") + " to " + filename, "success");
 }

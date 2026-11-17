@@ -77,13 +77,6 @@
                                            data-label="Price per ton" data-rules="required|number|min:100|max:100000|decimals:2">
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="moisture">Moisture Content (%)</label>
-                                    <input type="number" id="moisture" inputmode="decimal" placeholder="e.g. 12"
-                                           data-label="Moisture" data-rules="number|min:0|max:100|decimals:2">
-                                    <small class="form-hint">Optional. Drier biomass usually fetches a better price.</small>
-                                </div>
-
                                 <div class="form-section-title">Pickup Location</div>
 
                                 <div class="form-group full">
@@ -113,20 +106,6 @@
                                         <small class="error"></small>
                                         <small class="form-hint" id="descCount">0 / 500</small>
                                     </div>
-                                </div>
-
-                                <div class="form-group full">
-                                    <label for="photo">Biomass Photo</label>
-                                    <div class="upload-box">
-                                        <div>
-                                            <h4>Upload a photo of the stock</h4>
-                                            <small>Optional · JPG or PNG · up to 5 MB</small>
-                                        </div>
-                                        <input type="file" id="photo" accept=".jpg,.jpeg,.png"
-                                               data-label="Photo" data-rules="fileTypes:jpg,jpeg,png|maxSize:5">
-                                    </div>
-                                    <small class="error"></small>
-                                    <img id="photoPreview" class="photo-preview hidden" alt="Selected biomass photo">
                                 </div>
 
                             </div>
@@ -162,7 +141,6 @@
                                     <div><dt>Biomass</dt><dd id="sumType">—</dd></div>
                                     <div><dt>Available from</dt><dd id="sumDate">—</dd></div>
                                     <div><dt>Location</dt><dd id="sumLocation">—</dd></div>
-                                    <div><dt>Moisture</dt><dd id="sumMoisture">—</dd></div>
                                 </dl>
                             </div>
                         </section>
@@ -172,9 +150,8 @@
                                 <div class="card-title">Tips for a good listing</div>
                             </div>
                             <ul class="card-body tips">
-                                <li><i class="fa-solid fa-check"></i> Quote a realistic quantity you can deliver.</li>
-                                <li><i class="fa-solid fa-check"></i> Mention moisture content to build buyer trust.</li>
-                                <li><i class="fa-solid fa-check"></i> Add a clear photo of the stock.</li>
+                                <li><i class="fa-solid fa-check"></i> Buyers purchase the whole listing, so list only the quantity you can supply.</li>
+                                <li><i class="fa-solid fa-check"></i> Describe how the stock is stored and how easy pickup is.</li>
                                 <li><i class="fa-solid fa-check"></i> Keep the listing inactive when stock is not ready.</li>
                             </ul>
                         </section>

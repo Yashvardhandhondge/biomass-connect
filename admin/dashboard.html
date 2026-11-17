@@ -26,7 +26,7 @@
                 <div class="page-header">
                     <div>
                         <h1 id="welcomeTitle">Admin Dashboard</h1>
-                        <p class="page-subtitle" id="welcomeSubtitle">Platform overview of users, verifications, orders and disputes.</p>
+                        <p class="page-subtitle" id="welcomeSubtitle">Platform overview of users, verifications, orders and complaints.</p>
                     </div>
                     <div class="page-actions">
                         <a class="btn btn-secondary" href="reports-monitoring.html">
@@ -95,7 +95,7 @@
                         <div class="kpi-icon"><i class="fa-solid fa-scale-balanced"></i></div>
                         <div>
                             <div class="kpi-value" id="kpiDisputes">0</div>
-                            <div class="kpi-label">Open Disputes</div>
+                            <div class="kpi-label">Open Complaints</div>
                         </div>
                     </div>
 
@@ -103,7 +103,7 @@
                         <div class="kpi-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
                         <div>
                             <div class="kpi-value" id="kpiGmv">₹0</div>
-                            <div class="kpi-label">Gross Merchandise Value</div>
+                            <div class="kpi-label">Total Order Value</div>
                         </div>
                     </div>
 
@@ -131,7 +131,7 @@
                                             <th>Role</th>
                                             <th>Location</th>
                                             <th>Submitted</th>
-                                            <th>Documents</th>
+                                            <th>Document</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -182,11 +182,11 @@
                             <div class="card-body status-list" id="roleList"></div>
                         </section>
 
-                        <!-- OPEN DISPUTES -->
+                        <!-- OPEN COMPLAINTS -->
 
                         <section class="card">
                             <div class="card-header">
-                                <div class="card-title">Disputes Needing Action</div>
+                                <div class="card-title">Open Complaints</div>
                                 <a class="btn btn-ghost btn-sm" href="dispute-management.html">View all</a>
                             </div>
                             <div class="card-body mini-list" id="disputeList"></div>

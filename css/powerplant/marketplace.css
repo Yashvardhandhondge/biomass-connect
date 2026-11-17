@@ -45,6 +45,15 @@
     margin-right: 4px;
 }
 
+.listing-rating {
+    margin-top: 8px;
+}
+
+.rating-note i {
+    color: #f59e0b;
+    margin-right: 4px;
+}
+
 .price-row {
     display: flex;
     justify-content: space-between;

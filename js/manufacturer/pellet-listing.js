@@ -1,19 +1,11 @@
 // =========================
 // CREATE PELLET LISTING (US020 + US021 quality parameters)
+// A power plant buys the whole listing in one order (Store.placeOrder).
 // =========================
 
 const MANUFACTURER = "GreenPellet Industries";
 
-/* ---------- Custom rules (also mirrored on the manage page) ---------- */
-
-// batch number must be unique across this manufacturer's listings
-Validator.addRule("uniqueBatch", (v, p, el) => {
-    const exclude = (el && el.dataset.excludeId) || "";
-    const taken = Store.get("pelletListings").some(l =>
-        l.manufacturer === MANUFACTURER && l.id !== exclude &&
-        String(l.batchNo || "").toLowerCase() === v.toLowerCase());
-    return taken ? "Batch number " + v.toUpperCase() + " is already used by another listing" : "";
-});
+/* ---------- Grade rules (also used on the manage page) ---------- */
 
 function isPremium(el) {
     const grade = el && el.form && el.form.querySelector("[data-grade-select]");
@@ -41,13 +33,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     ["quantity", "price"].forEach(id => document.getElementById(id).addEventListener("input", updateValue));
-    document.getElementById("description").addEventListener("input", updateCount);
 
     form.addEventListener("reset", () => {
         setTimeout(() => {
             Validator.reset(form);
             updateValue();
-            updateCount();
         }, 0);
     });
 
@@ -64,24 +54,17 @@ function updateValue() {
     document.getElementById("listingValue").textContent = Store.inr(value);
 }
 
-function updateCount() {
-    document.getElementById("descCount").textContent = document.getElementById("description").value.length;
-}
-
 function publishListing() {
     const form = document.getElementById("pelletForm");
     if (!Validator.validateForm(form)) return;
 
     const val = id => document.getElementById(id).value.trim();
     const num = id => Number(document.getElementById(id).value);
-    const report = document.getElementById("qualityReport").files[0];
 
     const listing = Store.add("pelletListings", {
         manufacturer: MANUFACTURER,
         pelletType: val("pelletType"),
         grade: val("grade"),
-        batchNo: val("batchNo").toUpperCase(),
-        productionDate: val("productionDate"),
         quantity: num("quantity"),
         price: num("price"),
         diameter: num("diameter"),
@@ -93,8 +76,6 @@ function publishListing() {
         location: val("location"),
         availableFrom: val("availableFrom"),
         certification: val("certification"),
-        qualityReport: report ? report.name : "",
-        description: val("description"),
         status: "Active"
     });
 

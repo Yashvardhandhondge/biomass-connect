@@ -17,6 +17,12 @@
 
 .list-body .tabs {
     margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.list-body .tab {
+    padding: 8px 10px;
+    font-size: 13px;
 }
 
 .order-list {

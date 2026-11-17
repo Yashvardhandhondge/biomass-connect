@@ -29,8 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
         showToast(`Showing carbon savings from ${Store.date(report.from)} to ${Store.date(report.to)}`, "info");
     });
 
-    document.getElementById("downloadBtn").addEventListener("click", downloadReport);
-
     renderMethodology();
     setPreset(preset.value);
     apply();
@@ -163,40 +161,4 @@ function renderMethodology() {
         "Green energy = energy generated × co-firing ratio for each log entry."
     ];
     document.getElementById("methodList").innerHTML = items.map(t => `<li>${Store.esc(t)}</li>`).join("");
-}
-
-function downloadReport() {
-    if (!Validator.validateForm("#periodForm")) return;
-    apply();
-
-    if (!report.entries.length) {
-        showToast("No consumption data in the selected period — nothing to download", "warning");
-        return;
-    }
-
-    const i = report.impact;
-    const rows = [
-        ["Plant", Plant.NAME],
-        ["Period", report.from + " to " + report.to],
-        ["Generated on", Store.iso(0)],
-        [],
-        ["Metric", "Value"],
-        ["Pellets co-fired (t)", Plant.round(report.pellets, 2)],
-        ["Coal consumed (t)", Plant.round(report.coal, 2)],
-        ["Average co-firing ratio (%)", report.ratio],
-        ["Energy generated (MWh)", Plant.round(report.energy, 2)],
-        ["Green energy from biomass (MWh)", Plant.round(report.green, 2)],
-        ["CO2 avoided (t)", i.co2],
-        ["Coal saved (t)", i.coal],
-        ["Stubble burning avoided (t)", i.stubble],
-        ["Equivalent trees (1 year)", i.trees],
-        [],
-        ["Month", "Pellets (t)", "Co-firing (%)", "CO2 avoided (t)", "Coal saved (t)", "Stubble avoided (t)", "Green energy (MWh)"]
-    ].concat(report.months.map(k => {
-        const r = monthRow(k);
-        return [r.label, Plant.round(r.pellets, 2), r.ratio, r.co2, r.coal, r.stubble, Plant.round(r.green, 2)];
-    }));
-
-    Plant.downloadCSV(`carbon-savings-report_${report.from}_${report.to}.csv`, ["Biomass Connect - Carbon Savings Report"], rows);
-    showToast("Carbon savings report downloaded", "success");
 }

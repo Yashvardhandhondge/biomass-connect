@@ -1,5 +1,5 @@
 /* Order tracking layout — page-specific only.
-   Shared by tracking.html (purchase orders) and pellet-tracking.html (pellet orders). */
+   Used by tracking.html (purchase tracking). */
 
 .track-layout {
     display: grid;
@@ -15,11 +15,6 @@
 .track-search {
     padding: 14px 16px;
     border-bottom: 1px solid var(--border);
-}
-
-.track-tabs {
-    padding: 0 16px;
-    margin-bottom: 0;
 }
 
 .order-list {

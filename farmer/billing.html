@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Billing &amp; Complaints | Farmer | Biomass Connect</title>
+    <title>Payments &amp; Complaints | Farmer | Biomass Connect</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../css/theme.css">
@@ -25,8 +25,8 @@
 
                 <div class="page-header">
                     <div>
-                        <h1>Billing &amp; Complaints</h1>
-                        <p class="page-subtitle">Invoices for your delivered orders and support requests.</p>
+                        <h1>Payments &amp; Complaints</h1>
+                        <p class="page-subtitle">Payments for your delivered orders and complaints about them.</p>
                     </div>
                     <div class="page-actions">
                         <button type="button" class="btn btn-secondary" id="raiseBtn">
@@ -39,10 +39,10 @@
 
                 <div class="kpi-grid">
                     <div class="kpi-card">
-                        <div class="kpi-icon"><i class="fa-solid fa-file-invoice"></i></div>
+                        <div class="kpi-icon"><i class="fa-solid fa-truck-ramp-box"></i></div>
                         <div>
-                            <div class="kpi-value" id="kpiInvoiced">₹0</div>
-                            <div class="kpi-label">Total Invoiced</div>
+                            <div class="kpi-value" id="kpiDelivered">₹0</div>
+                            <div class="kpi-label">Delivered Value</div>
                         </div>
                     </div>
                     <div class="kpi-card">
@@ -69,20 +69,20 @@
                 </div>
 
                 <div class="tabs" id="pageTabs" role="tablist">
-                    <button type="button" class="tab active" data-tab="invoices" role="tab">Invoices</button>
-                    <button type="button" class="tab" data-tab="complaints" role="tab">Complaints</button>
+                    <button type="button" class="tab active" data-tab="payments" role="tab" aria-selected="true">Payments</button>
+                    <button type="button" class="tab" data-tab="complaints" role="tab" aria-selected="false">Complaints</button>
                 </div>
 
-                <!-- INVOICES -->
+                <!-- PAYMENTS -->
 
-                <div id="panel-invoices">
+                <div id="panel-payments">
 
                     <section class="card">
 
                         <div class="card-header">
                             <div>
-                                <div class="card-title">Invoice History</div>
-                                <div class="card-subtitle">Invoices are generated automatically when an order is delivered</div>
+                                <div class="card-title">Payments</div>
+                                <div class="card-subtitle">The buyer pays after delivery and marks the order as paid</div>
                             </div>
                         </div>
 
@@ -91,13 +91,12 @@
                             <div class="toolbar">
                                 <div class="search">
                                     <i class="fa-solid fa-magnifying-glass"></i>
-                                    <input type="search" id="invoiceSearch" placeholder="Search by invoice, order or buyer" data-novalidate aria-label="Search invoices">
+                                    <input type="search" id="paymentSearch" placeholder="Search by order, buyer or biomass" data-novalidate aria-label="Search payments">
                                 </div>
-                                <select id="invoiceStatus" data-novalidate aria-label="Filter by payment status">
-                                    <option value="">All statuses</option>
+                                <select id="paymentFilter" data-novalidate aria-label="Filter by payment status">
+                                    <option value="">All payments</option>
                                     <option>Paid</option>
                                     <option>Pending</option>
-                                    <option>Overdue</option>
                                 </select>
                             </div>
 
@@ -105,17 +104,17 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>Invoice No.</th>
                                             <th>Order ID</th>
                                             <th>Buyer</th>
-                                            <th>Invoice Date</th>
-                                            <th>Due Date</th>
+                                            <th>Biomass</th>
+                                            <th>Delivered On</th>
                                             <th>Amount</th>
-                                            <th>Status</th>
+                                            <th>Payment</th>
+                                            <th>Paid On</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="invoiceTable"></tbody>
+                                    <tbody id="paymentTable"></tbody>
                                 </table>
                             </div>
 
@@ -134,13 +133,13 @@
                         <div class="card-header">
                             <div>
                                 <div class="card-title">Raise a Complaint</div>
-                                <div class="card-subtitle">Our support team responds within 48 hours</div>
+                                <div class="card-subtitle">For payment issues on a delivered order. The admin team reviews and resolves it.</div>
                             </div>
                         </div>
 
                         <form class="card-body" id="complaintForm" novalidate>
 
-                            <div class="form-grid cols-3">
+                            <div class="form-grid">
 
                                 <div class="form-group">
                                     <label for="complaintOrder">Related Order</label>
@@ -149,32 +148,7 @@
 
                                 <div class="form-group">
                                     <label for="complaintCategory">Category</label>
-                                    <select id="complaintCategory" data-label="Category" data-rules="required">
-                                        <option value="">Select category</option>
-                                        <option>Payment Delay</option>
-                                        <option>Incorrect Payment Amount</option>
-                                        <option>Quality Dispute</option>
-                                        <option>Delivery / Pickup Issue</option>
-                                        <option>Order Cancellation</option>
-                                        <option>Platform / Technical Issue</option>
-                                        <option>Other</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="complaintPriority">Priority</label>
-                                    <select id="complaintPriority" data-label="Priority" data-rules="required">
-                                        <option value="">Select priority</option>
-                                        <option>Low</option>
-                                        <option>Medium</option>
-                                        <option>High</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group full">
-                                    <label for="complaintSubject">Subject</label>
-                                    <input type="text" id="complaintSubject" placeholder="Short summary of the issue"
-                                           data-label="Subject" data-rules="required|text|minlen:5|maxlen:100">
+                                    <select id="complaintCategory" data-label="Category" data-rules="required"></select>
                                 </div>
 
                                 <div class="form-group full">
@@ -185,19 +159,6 @@
                                         <small class="error"></small>
                                         <small class="form-hint" id="complaintCount">0 / 500</small>
                                     </div>
-                                </div>
-
-                                <div class="form-group full">
-                                    <label for="complaintFile">Attachment</label>
-                                    <div class="upload-box">
-                                        <div>
-                                            <h4>Supporting document</h4>
-                                            <small>Optional · PDF, JPG or PNG · up to 5 MB</small>
-                                        </div>
-                                        <input type="file" id="complaintFile" accept=".pdf,.jpg,.jpeg,.png"
-                                               data-label="Attachment" data-rules="fileTypes:pdf,jpg,jpeg,png|maxSize:5">
-                                    </div>
-                                    <small class="error"></small>
                                 </div>
 
                             </div>
@@ -219,7 +180,7 @@
 
                         <div class="card-header">
                             <div>
-                                <div class="card-title">Complaint History</div>
+                                <div class="card-title">Your Complaints</div>
                                 <div class="card-subtitle" id="complaintCountLabel">0 complaints</div>
                             </div>
                         </div>
@@ -230,12 +191,11 @@
                                     <tr>
                                         <th>Complaint ID</th>
                                         <th>Order</th>
+                                        <th>Against</th>
                                         <th>Category</th>
-                                        <th>Subject</th>
-                                        <th>Priority</th>
                                         <th>Raised On</th>
                                         <th>Status</th>
-                                        <th>Actions</th>
+                                        <th>Details</th>
                                     </tr>
                                 </thead>
                                 <tbody id="complaintTable"></tbody>
@@ -250,19 +210,6 @@
 
         </div>
 
-    </div>
-
-    <!-- INVOICE MODAL -->
-
-    <div class="modal-backdrop" id="invoiceModal">
-        <div class="modal modal-lg" role="dialog" aria-modal="true" aria-labelledby="invoiceTitle">
-            <div class="modal-header">
-                <h3 id="invoiceTitle">Invoice</h3>
-                <button type="button" class="modal-close" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body" id="invoiceBody"></div>
-            <div class="modal-footer" id="invoiceFooter"></div>
-        </div>
     </div>
 
     <!-- COMPLAINT MODAL -->

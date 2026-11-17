@@ -14,15 +14,14 @@ document.addEventListener("DOMContentLoaded", () => {
     loadPurchaseOrders(purchaseOrders);
     loadPelletOrders(pelletOrders);
     loadStatus(pelletOrders);
+
+    document.getElementById("ratingBox").innerHTML = Store.ratingHtml(MANUFACTURER);
 });
 
 function loadKpis(purchaseOrders, pelletListings, pelletOrders) {
-    // biomass committed: orders accepted by the farmer, on the way or received
-    const purchasedTons = purchaseOrders
-        .filter(o => ["Accepted", "In Transit", "Delivered"].includes(o.status))
-        .reduce((sum, o) => sum + Number(o.quantity || 0), 0);
-
-    const activePOs = purchaseOrders.filter(o => ["Pending", "Accepted", "In Transit"].includes(o.status)).length;
+    // every placed order is a purchase: orders cannot be cancelled
+    const purchasedTons = purchaseOrders.reduce((sum, o) => sum + Number(o.quantity || 0), 0);
+    const activePOs = purchaseOrders.filter(o => o.status !== "Delivered").length;
 
     const revenue = pelletOrders
         .filter(o => o.status === "Delivered")
@@ -46,7 +45,7 @@ function loadPurchaseOrders(orders) {
     const table = document.getElementById("poTable");
 
     if (!orders.length) {
-        table.innerHTML = emptyRow(6, "No purchase orders yet — browse the biomass marketplace to place one.");
+        table.innerHTML = emptyRow(6, "No purchase orders yet — browse the biomass marketplace to buy a listing.");
         return;
     }
 
@@ -57,7 +56,7 @@ function loadPurchaseOrders(orders) {
             <td>${Store.esc(o.biomassType)}</td>
             <td>${Store.esc(o.quantity)} Tons</td>
             <td>${Store.inr(o.total)}</td>
-            <td><span class="${Store.badge(o.status)}">${Store.esc(o.status)}</span></td>
+            <td>${Store.statusBadge(o.status)}</td>
         </tr>
     `).join("");
 }
@@ -77,16 +76,15 @@ function loadPelletOrders(orders) {
             <td>${Store.esc(o.pelletType)}</td>
             <td>${Store.esc(o.quantity)} Tons</td>
             <td>${Store.inr(o.total)}</td>
-            <td><span class="${Store.badge(o.status)}">${Store.esc(o.status)}</span></td>
+            <td>${Store.statusBadge(o.status)}</td>
         </tr>
     `).join("");
 }
 
 function loadStatus(orders) {
-    const groups = ["Pending", "Accepted", "In Transit", "Delivered"];
     const total = orders.length || 1;
 
-    document.getElementById("statusList").innerHTML = groups.map(label => {
+    document.getElementById("statusList").innerHTML = Store.ORDER_STEPS.map(label => {
         const count = orders.filter(o => o.status === label).length;
         return `
             <div>

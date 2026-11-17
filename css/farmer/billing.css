@@ -1,52 +1,7 @@
-/* Farmer — Billing & Complaints: page-specific layout only.
+/* Farmer — Payments & Complaints: page-specific layout only.
    Shared components (KPI cards, tabs, tables, forms, modal) live in ../theme.css */
-
-.cell-subject {
-    max-width: 260px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.invoice-head {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px;
-    padding: 14px 16px;
-    border-radius: var(--radius-sm);
-    background: var(--primary-softer);
-    border: 1px solid var(--primary-border);
-    font-size: 14px;
-}
-
-.invoice-head .text-subtle {
-    font-size: 12px;
-}
-
-.invoice-lines {
-    border: 1px solid var(--border);
-}
-
-.invoice-total td {
-    font-weight: 700;
-    background: var(--surface-muted);
-}
-
-.detail-list .span-full {
-    grid-column: 1 / -1;
-}
 
 .pre-wrap {
     white-space: pre-wrap;
     word-break: break-word;
-}
-
-.modal.modal-lg {
-    max-width: 720px;
-}
-
-@media (max-width: 768px) {
-    .invoice-head {
-        grid-template-columns: 1fr;
-    }
 }

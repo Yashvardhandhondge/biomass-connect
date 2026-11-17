@@ -1,8 +1,9 @@
 // =========================
 // FARMER — MANAGE BIOMASS LISTINGS (US010)
+// A listing becomes "Sold Out" when a manufacturer buys it; it is then locked
+// (no edit, activate / deactivate or delete).
 // =========================
 
-const OPEN_ORDER_STATUSES = ["Pending", "Accepted", "In Transit"];
 let updateEditCount = () => {};
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -62,33 +63,38 @@ function render() {
         return;
     }
 
-    table.innerHTML = rows.map(l => {
-        const toggleLabel = l.status === "Active" ? "Deactivate" : "Activate";
-        const toggleIcon = l.status === "Active" ? "fa-toggle-on" : "fa-toggle-off";
-        return `
-            <tr>
-                <td class="fw-600">${Store.esc(l.id)}</td>
-                <td>${Store.esc(l.biomassType)}</td>
-                <td>${Farmer.tons(l.quantity)}</td>
-                <td>${Store.inr(l.price)}</td>
-                <td>${Store.esc(l.location)}<div class="text-subtle cell-sub">${Store.esc(l.district)}, ${Store.esc(l.state)}</div></td>
-                <td>${Store.date(l.availableFrom)}</td>
-                <td>${Farmer.badge(l.status)}</td>
-                <td>
-                    <div class="table-actions">
-                        <button type="button" class="btn btn-secondary btn-sm" data-action="edit" data-id="${Store.esc(l.id)}" title="Edit listing">
-                            <i class="fa-solid fa-pen"></i> Edit
-                        </button>
-                        <button type="button" class="btn btn-secondary btn-sm" data-action="toggle" data-id="${Store.esc(l.id)}" title="${toggleLabel} listing">
-                            <i class="fa-solid ${toggleIcon}"></i> ${toggleLabel}
-                        </button>
-                        <button type="button" class="btn btn-danger btn-sm btn-icon" data-action="delete" data-id="${Store.esc(l.id)}" title="Delete listing" aria-label="Delete listing ${Store.esc(l.id)}">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>`;
-    }).join("");
+    table.innerHTML = rows.map(l => `
+        <tr>
+            <td class="fw-600">${Store.esc(l.id)}</td>
+            <td>${Store.esc(l.biomassType)}</td>
+            <td>${Farmer.tons(l.quantity)}</td>
+            <td>${Store.inr(l.price)}</td>
+            <td>${Store.esc(l.location)}<div class="text-subtle cell-sub">${Store.esc(l.district)}, ${Store.esc(l.state)}</div></td>
+            <td>${Store.date(l.availableFrom)}</td>
+            <td>${Store.statusBadge(l.status)}</td>
+            <td>${actionsHtml(l)}</td>
+        </tr>`).join("");
+}
+
+function actionsHtml(l) {
+    if (isLocked(l)) {
+        return `<span class="text-subtle" title="Sold out listings cannot be changed"><i class="fa-solid fa-lock"></i> Locked</span>`;
+    }
+    const id = Store.esc(l.id);
+    const toggleLabel = l.status === "Active" ? "Deactivate" : "Activate";
+    const toggleIcon = l.status === "Active" ? "fa-toggle-on" : "fa-toggle-off";
+    return `
+        <div class="table-actions">
+            <button type="button" class="btn btn-secondary btn-sm" data-action="edit" data-id="${id}" title="Edit listing">
+                <i class="fa-solid fa-pen"></i> Edit
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" data-action="toggle" data-id="${id}" title="${toggleLabel} listing">
+                <i class="fa-solid ${toggleIcon}"></i> ${toggleLabel}
+            </button>
+            <button type="button" class="btn btn-danger btn-sm btn-icon" data-action="delete" data-id="${id}" title="Delete listing" aria-label="Delete listing ${id}">
+                <i class="fa-solid fa-trash-can"></i>
+            </button>
+        </div>`;
 }
 
 function renderKpis(listings) {
@@ -109,28 +115,38 @@ function onTableClick(e) {
     if (btn.dataset.action === "delete") deleteListing(id);
 }
 
-function openOrdersFor(id) {
-    return Farmer.orders().filter(o => o.listingId === id && OPEN_ORDER_STATUSES.includes(o.status));
+/* ---------- Guards ---------- */
+
+function isLocked(l) {
+    return l.status === "Sold Out";
+}
+
+// returns the listing if it can still be changed, otherwise explains why and re-renders
+function editableListing(id) {
+    const l = Store.find("biomassListings", id);
+    if (!l || l.farmer !== FARMER_NAME) {
+        showToast("Listing " + id + " no longer exists", "error");
+    } else if (isLocked(l)) {
+        showToast("Listing " + id + " is sold out and can no longer be changed", "warning");
+    } else {
+        return l;
+    }
+    render();
+    return null;
 }
 
 /* ---------- Edit ---------- */
 
 function openEdit(id) {
-    const l = Store.find("biomassListings", id);
-    if (!l) {
-        showToast("Listing " + id + " no longer exists", "error");
-        render();
-        return;
-    }
+    const l = editableListing(id);
+    if (!l) return;
 
     document.getElementById("editTitle").textContent = "Edit Listing " + l.id;
     document.getElementById("editId").value = l.id;
     Farmer.fillSelect("editType", BIOMASS_TYPES, "Select biomass type", l.biomassType);
     Farmer.fillSelect("editState", INDIAN_STATES, "Select state", l.state);
-    document.getElementById("editStatus").value = l.status;
     document.getElementById("editQuantity").value = l.quantity;
     document.getElementById("editPrice").value = l.price;
-    document.getElementById("editMoisture").value = l.moisture == null ? "" : l.moisture;
     document.getElementById("editLocation").value = l.location || "";
     document.getElementById("editDistrict").value = l.district || "";
     document.getElementById("editDescription").value = l.description || "";
@@ -150,40 +166,31 @@ function saveEdit() {
     if (!Validator.validateForm("#editForm")) return;
 
     const id = document.getElementById("editId").value;
-    const current = Store.find("biomassListings", id);
+    const current = editableListing(id);
     if (!current) {
         Farmer.closeModal("editModal");
-        showToast("Listing " + id + " no longer exists", "error");
-        render();
         return;
     }
 
     const val = elId => document.getElementById(elId).value.trim();
     const patch = {
         biomassType: val("editType"),
-        status: val("editStatus"),
         quantity: Number(val("editQuantity")),
         price: Number(val("editPrice")),
         availableFrom: val("editAvailable"),
-        moisture: val("editMoisture") === "" ? null : Number(val("editMoisture")),
         location: val("editLocation"),
         district: val("editDistrict"),
         state: val("editState"),
         description: val("editDescription")
     };
 
-    const changed = Object.keys(patch).some(k => String(patch[k] == null ? "" : patch[k]) !== String(current[k] == null ? "" : current[k]));
+    const changed = Object.keys(patch).some(k => String(patch[k]) !== String(current[k] == null ? "" : current[k]));
     if (!changed) {
         showToast("No changes to save", "info");
         return;
     }
 
-    const openCount = openOrdersFor(id).length;
-    if (patch.status !== "Active" && current.status === "Active" && openCount) {
-        showToast("Note: " + openCount + " open order(s) on this listing will still need to be fulfilled.", "warning");
-    }
-
-    Store.update("biomassListings", id, Object.assign(patch, { updatedAt: Farmer.today() }));
+    Store.update("biomassListings", id, patch);
     Farmer.closeModal("editModal");
     render();
     showToast("Listing " + id + " updated successfully", "success");
@@ -192,12 +199,8 @@ function saveEdit() {
 /* ---------- Toggle / Delete ---------- */
 
 function toggleStatus(id) {
-    const l = Store.find("biomassListings", id);
-    if (!l) {
-        showToast("Listing " + id + " no longer exists", "error");
-        render();
-        return;
-    }
+    const l = editableListing(id);
+    if (!l) return;
 
     const next = l.status === "Active" ? "Inactive" : "Active";
 
@@ -206,7 +209,7 @@ function toggleStatus(id) {
         return;
     }
 
-    Store.update("biomassListings", id, { status: next, updatedAt: Farmer.today() });
+    Store.update("biomassListings", id, { status: next });
     render();
     showToast(next === "Active"
         ? "Listing " + id + " is now active and visible to buyers"
@@ -214,19 +217,8 @@ function toggleStatus(id) {
 }
 
 async function deleteListing(id) {
-    const l = Store.find("biomassListings", id);
-    if (!l) {
-        showToast("Listing " + id + " no longer exists", "error");
-        render();
-        return;
-    }
-
-    const open = openOrdersFor(id);
-    if (open.length) {
-        showToast("Cannot delete " + id + ": it has " + open.length + " open order(s) (" +
-            open.map(o => o.id).join(", ") + "). Deactivate it instead.", "error", { title: "Delete blocked" });
-        return;
-    }
+    const l = editableListing(id);
+    if (!l) return;
 
     const ok = await confirmDialog({
         title: "Delete listing " + id + "?",
@@ -235,6 +227,9 @@ async function deleteListing(id) {
         danger: true
     });
     if (!ok) return;
+
+    // it may have been bought while the dialog was open
+    if (!editableListing(id)) return;
 
     Store.remove("biomassListings", id);
     render();

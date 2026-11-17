@@ -26,15 +26,7 @@
                 <div class="page-header">
                     <div>
                         <h1>User Management</h1>
-                        <p class="page-subtitle">View, edit, block or unblock farmers, manufacturers and power plants.</p>
-                    </div>
-                    <div class="page-actions">
-                        <button class="btn btn-secondary" type="button" id="exportBtn">
-                            <i class="fa-solid fa-file-export"></i> Export CSV
-                        </button>
-                        <button class="btn btn-primary" type="button" id="addUserBtn">
-                            <i class="fa-solid fa-user-plus"></i> Add User
-                        </button>
+                        <p class="page-subtitle">View farmers, manufacturers and power plants, and block or unblock their accounts.</p>
                     </div>
                 </div>
 
@@ -147,96 +139,6 @@
         </div>
     </div>
 
-    <!-- ADD / EDIT USER MODAL -->
-
-    <div class="modal-backdrop" id="userModal" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="userModalTitle">
-            <div class="modal-header">
-                <h3 id="userModalTitle">Edit User</h3>
-                <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="userForm" novalidate>
-                <div class="modal-body">
-                    <div class="form-grid">
-
-                        <div class="form-group full">
-                            <label for="userName">Full Name / Organisation Name</label>
-                            <input type="text" id="userName" placeholder="e.g. Ramesh Patil" data-label="Name" data-rules="required|name">
-                            <small class="error"></small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="userRole">Role</label>
-                            <select id="userRole" data-rules="required">
-                                <option value="">Select role</option>
-                                <option value="Farmer">Farmer</option>
-                                <option value="Manufacturer">Manufacturer</option>
-                                <option value="Power Plant">Power Plant</option>
-                            </select>
-                            <small class="error"></small>
-                        </div>
-
-                        <div class="form-group" id="userStatusGroup">
-                            <label for="userStatus">Account Status</label>
-                            <select id="userStatus" data-rules="required">
-                                <option value="">Select status</option>
-                                <option value="Active">Active</option>
-                                <option value="Pending">Pending verification</option>
-                            </select>
-                            <small class="error"></small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="userEmail">Email</label>
-                            <input type="email" id="userEmail" placeholder="name@example.com" data-rules="required|email|uniqueEmail">
-                            <small class="error"></small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="userMobile">Mobile Number</label>
-                            <input type="tel" id="userMobile" placeholder="10-digit mobile" inputmode="numeric" data-rules="required|mobile|uniqueMobile">
-                            <small class="error"></small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="userLocation">City / District</label>
-                            <input type="text" id="userLocation" placeholder="e.g. Nashik" data-rules="required|name|maxlen:40">
-                            <small class="error"></small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="userState">State</label>
-                            <select id="userState" data-rules="required">
-                                <option value="">Select state</option>
-                                <option>Andhra Pradesh</option>
-                                <option>Bihar</option>
-                                <option>Chhattisgarh</option>
-                                <option>Gujarat</option>
-                                <option>Haryana</option>
-                                <option>Karnataka</option>
-                                <option>Madhya Pradesh</option>
-                                <option>Maharashtra</option>
-                                <option>Odisha</option>
-                                <option>Punjab</option>
-                                <option>Rajasthan</option>
-                                <option>Tamil Nadu</option>
-                                <option>Telangana</option>
-                                <option>Uttar Pradesh</option>
-                                <option>West Bengal</option>
-                            </select>
-                            <small class="error"></small>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-close>Cancel</button>
-                    <button class="btn btn-primary" type="submit" id="userSubmit"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- BLOCK USER MODAL -->
 
     <div class="modal-backdrop" id="blockModal" aria-hidden="true">
@@ -256,7 +158,7 @@
                                 <option>Fraudulent activity</option>
                                 <option>Fake or misleading listings</option>
                                 <option>Payment default</option>
-                                <option>Repeated order cancellations</option>
+                                <option>Orders not supplied</option>
                                 <option>Abusive behaviour</option>
                                 <option>Other policy violation</option>
                             </select>

@@ -26,7 +26,7 @@
                 <div class="page-header">
                     <div>
                         <h1>Purchase Orders</h1>
-                        <p class="page-subtitle">Create biomass purchase orders and manage the ones you have placed.</p>
+                        <p class="page-subtitle">Buy a whole biomass listing and follow the orders you have placed.</p>
                     </div>
                     <div class="page-actions">
                         <a class="btn btn-secondary" href="marketplace.html">
@@ -39,11 +39,11 @@
 
                     <!-- CREATE PURCHASE ORDER -->
 
-                    <section class="card" id="createSection">
+                    <section class="card">
                         <div class="card-header">
                             <div>
                                 <div class="card-title">Create Purchase Order</div>
-                                <div class="card-subtitle">Select a biomass listing and enter your order details</div>
+                                <div class="card-subtitle">Select a biomass listing. The whole listing is bought as one lot.</div>
                             </div>
                         </div>
 
@@ -63,24 +63,10 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="priceDisplay">Price per Ton</label>
-                                    <input type="text" id="priceDisplay" readonly placeholder="—" data-novalidate>
+                                    <label for="quantityDisplay">Quantity</label>
+                                    <input type="text" id="quantityDisplay" readonly placeholder="—" data-novalidate>
+                                    <small class="form-hint">Full listing quantity</small>
                                 </div>
-
-                                <div class="form-group">
-                                    <label for="quantity">Quantity (Tons)</label>
-                                    <input type="number" id="quantity" placeholder="e.g. 10" step="any" inputmode="decimal"
-                                           data-label="Quantity" data-rules="required|number|positive|max:10000|decimals:2">
-                                    <small class="form-hint" id="availableHint">Select a listing to see available quantity</small>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="deliveryDate">Delivery Date</label>
-                                    <input type="date" id="deliveryDate"
-                                           data-rules="required|date|minDate:+1|maxDate:+90|sameOrAfter:#listingAvailableFrom">
-                                    <small class="form-hint">Between tomorrow and the next 90 days</small>
-                                </div>
-                                <input type="hidden" id="listingAvailableFrom" data-label="the listing's available-from date">
 
                                 <div class="form-group full">
                                     <label for="deliveryAddress">Delivery Address</label>
@@ -89,8 +75,8 @@
                                 </div>
 
                                 <div class="form-group full">
-                                    <label for="notes">Notes for Farmer <span class="text-subtle">(optional)</span></label>
-                                    <textarea id="notes" rows="2" placeholder="Loading instructions, preferred delivery time, etc."
+                                    <label for="notes">Notes <span class="text-subtle">(optional)</span></label>
+                                    <textarea id="notes" rows="2" placeholder="Loading instructions, gate timings, etc."
                                               data-label="Notes" data-rules="text|maxlen:500"></textarea>
                                     <small class="form-hint"><span id="notesCount">0</span>/500 characters</small>
                                 </div>
@@ -117,7 +103,7 @@
                                 <div class="summary-line"><span>Price / ton</span><strong id="sumPrice">—</strong></div>
                                 <div class="summary-line total"><span>Order Total</span><strong id="sumTotal">₹0</strong></div>
                             </div>
-                            <p class="form-hint">Payment is due after the farmer accepts the order. Invoices appear under Billing.</p>
+                            <p class="form-hint">Once placed, an order cannot be cancelled. The logistics team schedules the pickup and delivery. Pay the farmer from Billing after delivery.</p>
                         </div>
                     </aside>
 
@@ -141,12 +127,10 @@
                             </div>
                             <select id="statusFilter" data-novalidate aria-label="Filter by status">
                                 <option value="">All statuses</option>
-                                <option>Pending</option>
-                                <option>Accepted</option>
+                                <option>Placed</option>
+                                <option>Pickup Scheduled</option>
                                 <option>In Transit</option>
                                 <option>Delivered</option>
-                                <option>Rejected</option>
-                                <option>Cancelled</option>
                             </select>
                         </div>
                     </div>
@@ -161,7 +145,6 @@
                                     <th>Quantity</th>
                                     <th>Amount</th>
                                     <th>Order Date</th>
-                                    <th>Delivery Date</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
@@ -175,21 +158,6 @@
 
         </div>
 
-    </div>
-
-    <!-- VIEW ORDER MODAL -->
-
-    <div class="modal-backdrop" id="viewModal">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="viewTitle">
-            <div class="modal-header">
-                <h3 id="viewTitle">Purchase Order</h3>
-                <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body" id="viewBody"></div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-close>Close</button>
-            </div>
-        </div>
     </div>
 
     <script src="../js/common/toast.js"></script>

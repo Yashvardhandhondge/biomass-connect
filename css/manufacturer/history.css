@@ -1,5 +1,5 @@
 /* Report pages layout — page-specific only.
-   Shared by history.html (purchase history) and pellet-sales.html (pellet sales). */
+   Used by history.html (purchase history). */
 
 .grid-2 > .card + .card {
     margin-top: 0;

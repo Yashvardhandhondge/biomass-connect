@@ -17,7 +17,7 @@
      <script src="../js/<role>/<page>.js"></script>
    </body>
 
-   data-role: farmer | manufacturer | powerplant | admin
+   data-role: farmer | manufacturer | powerplant | admin | logistics
    data-page: file name without ".html" (auto-detected if omitted)
 
    A notifications page only needs <div id="notificationsPage"></div>.
@@ -41,7 +41,7 @@
                 { page: "tracking", label: "Order Tracking", icon: "fa-truck-fast" },
                 { page: "history", label: "Order History", icon: "fa-clock-rotate-left" },
                 { section: "Account" },
-                { page: "billing", label: "Billing & Complaints", icon: "fa-file-invoice" },
+                { page: "billing", label: "Payments & Complaints", icon: "fa-file-invoice" },
                 { page: "notifications", label: "Notifications", icon: "fa-bell" },
                 { page: "profile", label: "Profile", icon: "fa-user" }
             ]
@@ -52,12 +52,12 @@
             user: { name: "GreenPellet Industries", role: "Manufacturer" },
             items: [
                 { page: "dashboard", label: "Dashboard", icon: "fa-house" },
-                { section: "Biomass Procurement" },
+                { section: "Buy Biomass" },
                 { page: "marketplace", label: "Biomass Marketplace", icon: "fa-store" },
                 { page: "purchase-orders", label: "Purchase Orders", icon: "fa-file-signature" },
                 { page: "tracking", label: "Purchase Tracking", icon: "fa-truck-fast" },
                 { page: "history", label: "Purchase History", icon: "fa-clock-rotate-left" },
-                { section: "Pellet Sales" },
+                { section: "Sell Pellets" },
                 { page: "pellet-listing", label: "Create Pellet Listing", icon: "fa-circle-plus" },
                 { page: "pellet-management", label: "Manage Pellet Listings", icon: "fa-boxes-stacked" },
                 { page: "pellet-orders", label: "Pellet Orders Received", icon: "fa-cart-shopping" },
@@ -65,7 +65,6 @@
                 { page: "pellet-sales", label: "Pellet Sales History", icon: "fa-chart-line" },
                 { section: "Account" },
                 { page: "billing", label: "Billing & Complaints", icon: "fa-file-invoice" },
-                { page: "upload-documents", label: "Business Documents", icon: "fa-file-arrow-up" },
                 { page: "notifications", label: "Notifications", icon: "fa-bell" },
                 { page: "profile", label: "Profile", icon: "fa-user" }
             ]
@@ -76,19 +75,18 @@
             user: { name: "NTPC Nashik Unit", role: "Coal Power Plant" },
             items: [
                 { page: "dashboard", label: "Dashboard", icon: "fa-house" },
-                { section: "Procurement" },
+                { section: "Buy Pellets" },
                 { page: "marketplace", label: "Pellet Marketplace", icon: "fa-store" },
                 { page: "purchase-orders", label: "Place Pellet Order", icon: "fa-file-signature" },
-                { page: "tracking", label: "Active Orders", icon: "fa-truck-fast" },
+                { page: "tracking", label: "Order Tracking", icon: "fa-truck-fast" },
                 { page: "history", label: "Purchase History", icon: "fa-clock-rotate-left" },
                 { page: "pellet-feedback", label: "Pellet Batch Feedback", icon: "fa-clipboard-check" },
                 { section: "Sustainability" },
                 { page: "consumption", label: "Biomass Consumption", icon: "fa-fire-flame-curved" },
                 { page: "carbon-savings", label: "Carbon Savings", icon: "fa-leaf" },
-                { page: "certifications", label: "Certifications", icon: "fa-certificate" },
+                { page: "certifications", label: "Compliance Certificate", icon: "fa-certificate" },
                 { section: "Account" },
                 { page: "billing", label: "Billing & Complaints", icon: "fa-file-invoice" },
-                { page: "upload-documents", label: "Business Documents", icon: "fa-file-arrow-up" },
                 { page: "notifications", label: "Notifications", icon: "fa-bell" },
                 { page: "profile", label: "Profile", icon: "fa-user" }
             ]
@@ -113,6 +111,14 @@
                 { page: "setting", label: "Settings", icon: "fa-gear" },
                 { page: "profile", label: "Profile", icon: "fa-user" }
             ]
+        },
+
+        logistics: {
+            label: "Logistics Portal",
+            user: { name: "Logistics Team", role: "Logistics Partner" },
+            items: [
+                { page: "dashboard", label: "Shipments", icon: "fa-truck-fast" }
+            ]
         }
     };
 
@@ -120,31 +126,35 @@
 
     const NOTIFICATIONS = {
         farmer: [
-            { id: "f1", type: "order", title: "New order received", text: "Eco Fuel Ltd placed an order for 20 tons of Rice Husk (ORD001).", time: "10 min ago", link: "orders.html" },
-            { id: "f2", type: "delivery", title: "Expected delivery updated", text: "ORD003 to Bio Fuel Corp is expected to be delivered on 18 Nov 2026.", time: "2 hours ago", link: "tracking.html" },
-            { id: "f3", type: "payment", title: "Payment received", text: "₹32,000 received for ORD002 from Green Energy.", time: "Yesterday", link: "billing.html" },
-            { id: "f4", type: "delivery", title: "Order delivered", text: "ORD002 (15 tons Wheat Straw) was delivered successfully.", time: "2 days ago", link: "history.html" },
-            { id: "f5", type: "alert", title: "Listing expiring soon", text: "Your Cotton Stalk listing expires in 3 days.", time: "3 days ago", link: "manage-listings.html" }
+            { id: "f1", type: "order", title: "New order received", text: "GreenPellet Industries bought your entire Cotton Stalk listing (12 tons), order PO-B2044. Please keep it ready for pickup.", time: "1 day ago", link: "orders.html" },
+            { id: "f2", type: "delivery", title: "Pickup scheduled", text: "The logistics team will pick up PO-B2041 (Rice Husk, 20 tons) tomorrow. Vehicle MH15EF2290.", time: "3 hours ago", link: "tracking.html" },
+            { id: "f3", type: "delivery", title: "Order picked up", text: "PO-B2045 (Maize Stover, 18 tons) is on the way to GreenPellet Industries.", time: "Yesterday", link: "tracking.html" },
+            { id: "f4", type: "payment", title: "Payment received", text: "₹32,250 received for PO-B2042 from EcoFuel Pellets Ltd.", time: "2 days ago", link: "billing.html" },
+            { id: "f5", type: "alert", title: "Complaint resolved", text: "Your complaint CMP-1001 about the payment for PO-B2042 has been resolved.", time: "2 days ago", link: "billing.html?tab=complaints" }
         ],
         manufacturer: [
-            { id: "m1", type: "order", title: "New pellet order", text: "NTPC Nashik Unit ordered 50 tons of Premium Pellets (PO-P1021).", time: "15 min ago", link: "pellet-orders.html" },
-            { id: "m2", type: "delivery", title: "Biomass shipment in transit", text: "PO-B2045 (Rice Husk, 20 tons) is expected on 16 Nov 2026.", time: "1 hour ago", link: "tracking.html" },
-            { id: "m3", type: "order", title: "Purchase order accepted", text: "Ramesh Patil accepted your purchase order PO-B2046.", time: "5 hours ago", link: "purchase-orders.html" },
-            { id: "m4", type: "delivery", title: "Pellet order delivered", text: "PO-P1018 was delivered to Tata Power Trombay.", time: "Yesterday", link: "pellet-sales.html" },
-            { id: "m5", type: "alert", title: "Document verification pending", text: "Upload your Pollution Control certificate to complete verification.", time: "2 days ago", link: "upload-documents.html" }
+            { id: "m1", type: "order", title: "New pellet order", text: "Tata Power Trombay bought your Agro Residue Pellets listing (30 tons), order PP-3013.", time: "15 min ago", link: "pellet-orders.html" },
+            { id: "m2", type: "delivery", title: "Biomass in transit", text: "PO-B2045 (Maize Stover, 18 tons) is on the way and expected tomorrow.", time: "1 hour ago", link: "tracking.html" },
+            { id: "m3", type: "delivery", title: "Pellet pickup scheduled", text: "The logistics team will pick up PP-3012 (40 tons) from your unit tomorrow.", time: "5 hours ago", link: "pellet-tracking.html" },
+            { id: "m4", type: "alert", title: "New batch rating", text: "NTPC Nashik Unit submitted batch details for PP-3009. Quality score 4.5 / 5.", time: "Yesterday", link: "pellet-sales.html" },
+            { id: "m5", type: "payment", title: "Payment pending", text: "Payment of ₹35,200 to Ramesh Patil for PO-B2040 is pending.", time: "2 days ago", link: "billing.html" }
         ],
         powerplant: [
-            { id: "p1", type: "delivery", title: "Pellet shipment dispatched", text: "Order PP-3011 (50 tons) is expected to arrive on 17 Nov 2026.", time: "20 min ago", link: "tracking.html" },
-            { id: "p2", type: "order", title: "Order confirmed", text: "GreenPellet Industries confirmed order PP-3012.", time: "3 hours ago", link: "purchase-orders.html" },
-            { id: "p3", type: "delivery", title: "Order delivered", text: "PP-3008 was delivered. Please submit pellet batch feedback.", time: "Yesterday", link: "pellet-feedback.html" },
-            { id: "p4", type: "payment", title: "Invoice generated", text: "Invoice INV-PP-3008 of ₹4,25,000 is due on 30 Nov 2026.", time: "2 days ago", link: "billing.html" },
-            { id: "p5", type: "alert", title: "Certificate renewal", text: "Your co-firing compliance certificate expires on 31 Dec 2026.", time: "4 days ago", link: "certifications.html" }
+            { id: "p1", type: "delivery", title: "Shipment in transit", text: "PP-3011 (50 tons Bagasse Pellets) is on the way and expected tomorrow.", time: "20 min ago", link: "tracking.html" },
+            { id: "p2", type: "delivery", title: "Pickup scheduled", text: "PP-3012 will be picked up from GreenPellet Industries tomorrow.", time: "3 hours ago", link: "tracking.html" },
+            { id: "p3", type: "delivery", title: "Order delivered", text: "PP-3008 was delivered. Please submit the pellet batch details.", time: "3 days ago", link: "pellet-feedback.html" },
+            { id: "p4", type: "payment", title: "Payment pending", text: "₹3,90,000 for PP-3008 is due to GreenPellet Industries.", time: "3 days ago", link: "billing.html" },
+            { id: "p5", type: "alert", title: "Compliance certificate issued", text: "Admin issued your Government Norms Compliance Certificate.", time: "2 months ago", link: "certifications.html" }
         ],
         admin: [
-            { id: "a1", type: "alert", title: "New verification request", text: "3 new farmer registrations are awaiting document verification.", time: "5 min ago", link: "farmer-verification.html" },
-            { id: "a2", type: "alert", title: "Dispute raised", text: "NTPC Nashik Unit raised a dispute on order PP-3005.", time: "1 hour ago", link: "dispute-management.html" },
-            { id: "a3", type: "order", title: "High value transaction", text: "Transaction TXN-88412 of ₹12,40,000 completed.", time: "3 hours ago", link: "orders-monitoring.html" },
-            { id: "a4", type: "alert", title: "Manufacturer verification", text: "GreenPellet Industries uploaded GST and pollution certificates.", time: "Yesterday", link: "manufacturer-verification.html" }
+            { id: "a1", type: "alert", title: "New verification request", text: "3 new farmer registrations are awaiting Aadhaar verification.", time: "5 min ago", link: "farmer-verification.html" },
+            { id: "a2", type: "alert", title: "Complaint raised", text: "NTPC Nashik Unit raised a complaint on order PP-3011.", time: "1 day ago", link: "dispute-management.html" },
+            { id: "a3", type: "order", title: "High value order", text: "Order PP-3008 of ₹3,90,000 was delivered.", time: "3 days ago", link: "orders-monitoring.html" },
+            { id: "a4", type: "alert", title: "Manufacturer verification", text: "Shree Agro Pellets uploaded their GST certificate.", time: "Yesterday", link: "manufacturer-verification.html" }
+        ],
+        logistics: [
+            { id: "l1", type: "order", title: "New pickup request", text: "PP-3013: 30 tons from GreenPellet Industries, Nashik to Tata Power Trombay.", time: "15 min ago", link: "dashboard.html" },
+            { id: "l2", type: "order", title: "New pickup request", text: "PO-B2044: 12 tons Cotton Stalk from Ramesh Patil, Nashik to GreenPellet Industries.", time: "1 day ago", link: "dashboard.html" }
         ]
     };
 
@@ -224,6 +234,10 @@
 
     /* ---------------- Render topbar ---------------- */
 
+    function hasPage(page) {
+        return !!menu && menu.items.some(i => i.page === page);
+    }
+
     function pageLabel() {
         if (!menu) return document.title;
         const item = menu.items.find(i => i.page === currentPage);
@@ -250,10 +264,10 @@
                     "</button>" +
                     '<div class="notif-panel" id="notifPanel"></div>' +
                 "</div>" +
-                '<a class="user-chip" href="profile.html" title="Profile">' +
+                (hasPage("profile") ? '<a class="user-chip" href="profile.html" title="Profile">' : '<span class="user-chip">') +
                     '<span class="avatar">' + initials(user.name) + "</span>" +
                     '<span class="user-meta"><strong>' + escapeHtml(user.name) + "</strong><small>" + escapeHtml(user.role) + "</small></span>" +
-                "</a>" +
+                (hasPage("profile") ? "</a>" : "</span>") +
             "</div>";
 
         el.querySelector(".topbar-menu").addEventListener("click", () => body.classList.toggle("sidebar-open"));
@@ -286,7 +300,7 @@
             '<div class="notif-panel-list">' +
                 (list.length ? list.map(notifItemHtml).join("") : '<div class="empty-state">No notifications</div>') +
             "</div>" +
-            (menu.items.some(i => i.page === "notifications") ? '<a class="notif-panel-foot" href="notifications.html">View all notifications</a>' : "");
+            (hasPage("notifications") ? '<a class="notif-panel-foot" href="notifications.html">View all notifications</a>' : "");
 
         panel.querySelector("#markAllBtn").addEventListener("click", e => {
             e.stopPropagation();

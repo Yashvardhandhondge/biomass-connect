@@ -7,11 +7,17 @@
    Plant.NAME                 logged-in plant ("NTPC Nashik Unit")
    Plant.orders()             pelletOrders placed by this plant
    Plant.profile()            saved profile merged with defaults
+   Plant.saveProfile(data)    localStorage "bc_profile_powerplant"
+                              (layout.js shows its `name` in the topbar)
+     { name, contactPerson, designation, mobile, email, gst, capacity (MW),
+       address, city, state, pincode,
+       gstCertificate (file name), gstStatus: "Verified" | "Pending" | "Rejected",
+       memberSince, updatedAt }
    Plant.consumption()        powerplant_consumption (seeded)
+     { id, date, unit, pellets (t), coal (t), ratio (%), energy (MWh), remarks, createdAt }
    Plant.monthly(entries)     { "YYYY-MM": { pellets, coal, energy, ratio, entries } }
    Plant.impact(pellets)      { co2, coal, stubble, trees }
    Plant.openModal(id) / Plant.closeModal(id)
-   Plant.downloadCSV(file, headers, rows) / Plant.downloadText(file, text)
    Plant.param(name)          query-string value
 ========================================================= */
 
@@ -39,11 +45,13 @@
         email: "powerplant@gmail.com",
         gst: "27AABCN1234F1Z5",
         capacity: 630,
-        cofiringTarget: 7,
         address: "Nashik Thermal Power Station, Eklahare, Nashik Road",
         city: "Nashik",
         state: "Maharashtra",
-        pincode: "422105"
+        pincode: "422105",
+        gstCertificate: "gst-registration-certificate.pdf",
+        gstStatus: "Verified",
+        memberSince: "2025-02-03"
     };
 
     /* ---------------- Data ---------------- */
@@ -178,10 +186,10 @@
 
     function daysUntil(iso) {
         const p = String(iso).split("-").map(Number);
-        const target = new Date(p[0], p[1] - 1, p[2]);
+        const day = new Date(p[0], p[1] - 1, p[2]);
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        return Math.round((target - today) / 86400000);
+        return Math.round((day - today) / 86400000);
     }
 
     function fileSize(bytes) {
@@ -194,38 +202,13 @@
     // badge class with extra statuses used on power plant pages
     function badge(status) {
         const s = String(status || "").toLowerCase();
-        if (["valid", "within spec", "on track"].includes(s)) return "badge badge-success";
-        if (["expiring", "expiring soon", "uploaded", "delayed", "deviation", "below target"].includes(s)) return "badge badge-warning";
+        if (["within spec"].includes(s)) return "badge badge-success";
+        if (["delayed", "deviation"].includes(s)) return "badge badge-warning";
         return Store.badge(status);
     }
 
     function param(name) {
         return new URLSearchParams(window.location.search).get(name);
-    }
-
-    /* ---------------- Downloads ---------------- */
-
-    function downloadText(filename, text, type) {
-        const blob = new Blob([text], { type: type || "text/plain;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-    }
-
-    function csvCell(value) {
-        let s = String(value == null ? "" : value);
-        if (/^[=+\-@]/.test(s)) s = "'" + s;           // avoid spreadsheet formula injection
-        return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
-    }
-
-    function downloadCSV(filename, headers, rows) {
-        const lines = [headers].concat(rows).map(r => r.map(csvCell).join(","));
-        downloadText(filename, "﻿" + lines.join("\r\n"), "text/csv;charset=utf-8");
     }
 
     /* ---------------- Modals ---------------- */
@@ -303,8 +286,6 @@
         fileSize,
         badge,
         param,
-        downloadText,
-        downloadCSV,
         openModal,
         closeModal,
         counter,

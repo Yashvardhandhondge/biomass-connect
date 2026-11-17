@@ -33,10 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
     refresh();
 });
 
-function target() {
-    return Number(Plant.profile().cofiringTarget) || 7;
-}
-
 function refresh() {
     const entries = Plant.consumption();
     loadKpis(entries);
@@ -99,12 +95,7 @@ function saveEntry(e) {
         remarks: document.getElementById("remarks").value.trim()
     }, "CE-");
 
-    const t = target();
-    showToast(
-        `Entry saved for ${unit} on ${Store.date(date)} — co-firing ${ratio.toFixed(2)}%` +
-        (ratio < t ? ` (below your ${Plant.num(t)}% target)` : ` (meets your ${Plant.num(t)}% target)`),
-        "success"
-    );
+    showToast(`Entry saved for ${unit} on ${Store.date(date)} — co-firing ${ratio.toFixed(2)}%`, "success");
 
     document.getElementById("entryForm").reset();
     refresh();
@@ -134,16 +125,11 @@ async function deleteEntry(id) {
 
 function loadKpis(entries) {
     const month = Plant.monthly(entries)[Plant.monthKey(Store.iso(0))] || { pellets: 0, coal: 0, energy: 0, ratio: 0 };
-    const t = target();
 
     document.getElementById("kpiPellets").textContent = Plant.num(month.pellets) + " t";
     document.getElementById("kpiCoal").textContent = Plant.num(month.coal, 0) + " t";
     document.getElementById("kpiRatio").textContent = Plant.num(month.ratio) + "%";
     document.getElementById("kpiEnergy").textContent = Plant.num(month.energy, 0);
-
-    const note = document.getElementById("kpiRatioNote");
-    note.textContent = "Target " + Plant.num(t) + "%";
-    note.classList.toggle("down", month.ratio < t);
 }
 
 function renderChart(entries) {
@@ -151,7 +137,7 @@ function renderChart(entries) {
     const agg = Plant.monthly(entries);
     const current = Plant.monthKey(Store.iso(0));
     const values = months.map(k => agg[k] ? agg[k].ratio : 0);
-    const scale = Math.max(...values, target()) || 1;
+    const scale = Math.max(...values) || 1;
 
     document.getElementById("ratioChart").innerHTML = months.map((k, i) => {
         const v = values[i];
@@ -163,7 +149,6 @@ function renderChart(entries) {
 
     const withData = values.filter(v => v > 0);
     const avg = withData.length ? withData.reduce((s, v) => s + v, 0) / withData.length : 0;
-    document.getElementById("chartSubtitle").textContent = "Last 6 months · target " + Plant.num(target()) + "%";
     document.getElementById("chartNote").textContent = withData.length
         ? `6-month average ${avg.toFixed(2)}%. The highlighted bar is the current month.`
         : "No consumption logged in the last 6 months.";
@@ -183,14 +168,13 @@ function renderTable() {
         return;
     }
 
-    const t = target();
     table.innerHTML = list.map(e => `
         <tr>
             <td class="fw-600">${Store.date(e.date)}</td>
             <td>${Store.esc(e.unit)}</td>
             <td>${Plant.num(e.pellets)}</td>
             <td>${Plant.num(e.coal)}</td>
-            <td><span class="${Number(e.ratio) >= t ? "text-success" : "text-warning"} fw-600">${Number(e.ratio).toFixed(2)}%</span></td>
+            <td class="fw-600">${Number(e.ratio).toFixed(2)}%</td>
             <td>${Plant.num(e.energy)}</td>
             <td class="text-muted">${e.remarks ? Store.esc(e.remarks) : "—"}</td>
             <td><button class="btn btn-danger btn-icon" type="button" data-delete="${Store.esc(e.id)}" title="Delete entry" aria-label="Delete entry"><i class="fa-solid fa-trash-can"></i></button></td>

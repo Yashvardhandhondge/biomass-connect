@@ -55,19 +55,8 @@ const Farmer = (function () {
         return Store.iso(0);
     }
 
-    function addDays(isoStr, days) {
-        const parts = String(isoStr || "").split("-").map(Number);
-        if (parts.length !== 3) return "";
-        const d = new Date(parts[0], parts[1] - 1, parts[2] + days);
-        return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-    }
-
     function tons(n) {
         return Number(n || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 }) + " Tons";
-    }
-
-    function badge(status) {
-        return '<span class="' + Store.badge(status) + '">' + Store.esc(status) + "</span>";
     }
 
     function emptyRow(colspan, icon, text) {
@@ -167,33 +156,12 @@ const Farmer = (function () {
         if (open) closeModal(open);
     });
 
-    /* ---------- Files ---------- */
-
-    function download(filename, content, mime) {
-        const blob = new Blob([content], { type: mime || "text/plain;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-    }
-
-    function toCsv(rows) {
-        return rows.map(row => row.map(cell => {
-            const s = String(cell == null ? "" : cell);
-            return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
-        }).join(",")).join("\r\n");
-    }
-
     return {
         name: FARMER_NAME,
         listings, orders, readJSON, writeJSON,
-        today, addDays, tons, badge, emptyRow, param,
+        today, tons, emptyRow, param,
         fillSelect, counter, setRef, fieldError,
-        openModal, closeModal, download, toCsv
+        openModal, closeModal
     };
 
 })();

@@ -26,7 +26,7 @@
                 <div class="page-header">
                     <div>
                         <h1>Power Plant Dashboard</h1>
-                        <p class="page-subtitle">Pellet procurement, co-firing performance and carbon impact at a glance.</p>
+                        <p class="page-subtitle">Your pellet orders, deliveries and batch feedback at a glance.</p>
                     </div>
                     <div class="page-actions">
                         <a class="btn btn-secondary" href="consumption.html">
@@ -45,9 +45,9 @@
                     <div class="kpi-card">
                         <div class="kpi-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
                         <div>
-                            <div class="kpi-value" id="kpiPurchased">0 t</div>
-                            <div class="kpi-label">Pellets Purchased</div>
-                            <div class="kpi-trend" id="kpiPurchasedNote"></div>
+                            <div class="kpi-value" id="kpiDelivered">0 t</div>
+                            <div class="kpi-label">Pellets Delivered</div>
+                            <div class="kpi-trend" id="kpiDeliveredNote"></div>
                         </div>
                     </div>
 
@@ -61,20 +61,20 @@
                     </div>
 
                     <div class="kpi-card">
-                        <div class="kpi-icon"><i class="fa-solid fa-fire-flame-curved"></i></div>
+                        <div class="kpi-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
                         <div>
-                            <div class="kpi-value" id="kpiCofired">0 t</div>
-                            <div class="kpi-label">Biomass Co-fired This Month</div>
-                            <div class="kpi-trend" id="kpiCofiredNote"></div>
+                            <div class="kpi-value" id="kpiValue">₹0</div>
+                            <div class="kpi-label">Total Order Value</div>
+                            <div class="kpi-trend" id="kpiValueNote"></div>
                         </div>
                     </div>
 
                     <div class="kpi-card">
-                        <div class="kpi-icon"><i class="fa-solid fa-leaf"></i></div>
+                        <div class="kpi-icon"><i class="fa-solid fa-clipboard-check"></i></div>
                         <div>
-                            <div class="kpi-value" id="kpiCo2">0 t</div>
-                            <div class="kpi-label">CO₂ Avoided (12 months)</div>
-                            <div class="kpi-trend" id="kpiCo2Note"></div>
+                            <div class="kpi-value" id="kpiFeedback">0</div>
+                            <div class="kpi-label">Batches Awaiting Feedback</div>
+                            <div class="kpi-trend" id="kpiFeedbackNote"></div>
                         </div>
                     </div>
 
@@ -91,7 +91,7 @@
                                 <div class="card-title">Recent Pellet Orders</div>
                                 <div class="card-subtitle">Latest orders placed with manufacturers</div>
                             </div>
-                            <a class="btn btn-ghost btn-sm" href="purchase-orders.html">View all <i class="fa-solid fa-arrow-right"></i></a>
+                            <a class="btn btn-ghost btn-sm" href="tracking.html">Track orders <i class="fa-solid fa-arrow-right"></i></a>
                         </div>
 
                         <div class="table-wrap">
@@ -103,7 +103,7 @@
                                         <th>Pellet Type</th>
                                         <th>Quantity</th>
                                         <th>Amount</th>
-                                        <th>Delivery By</th>
+                                        <th>Ordered On</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -113,43 +113,21 @@
 
                     </section>
 
-                    <!-- CO-FIRING + QUICK LINKS -->
+                    <!-- QUICK LINKS -->
 
-                    <div class="stack">
-
-                        <section class="card">
-                            <div class="card-header">
-                                <div>
-                                    <div class="card-title">Co-firing This Month</div>
-                                    <div class="card-subtitle">Against your blending target</div>
-                                </div>
-                                <span id="targetBadge"></span>
-                            </div>
-                            <div class="card-body">
-                                <div class="cofiring-figure">
-                                    <strong id="cofiringRatio">0%</strong>
-                                    <span class="text-muted" id="cofiringTarget">Target 7%</span>
-                                </div>
-                                <div class="progress"><span id="cofiringBar" style="width:0%"></span></div>
-                                <p class="form-hint" id="cofiringHint"></p>
-                            </div>
-                        </section>
-
-                        <section class="card">
-                            <div class="card-header">
-                                <div class="card-title">Quick Links</div>
-                            </div>
-                            <div class="card-body action-grid quick-actions">
-                                <a class="action-tile" href="marketplace.html"><i class="fa-solid fa-store"></i> Buy Pellets</a>
-                                <a class="action-tile" href="tracking.html"><i class="fa-solid fa-truck-fast"></i> Track Orders</a>
-                                <a class="action-tile" href="consumption.html"><i class="fa-solid fa-fire-flame-curved"></i> Consumption</a>
-                                <a class="action-tile" href="carbon-savings.html"><i class="fa-solid fa-leaf"></i> Carbon Savings</a>
-                                <a class="action-tile" href="certifications.html"><i class="fa-solid fa-certificate"></i> Certifications</a>
-                                <a class="action-tile" href="billing.html"><i class="fa-solid fa-file-invoice"></i> Billing</a>
-                            </div>
-                        </section>
-
-                    </div>
+                    <section class="card">
+                        <div class="card-header">
+                            <div class="card-title">Quick Links</div>
+                        </div>
+                        <div class="card-body action-grid quick-actions">
+                            <a class="action-tile" href="marketplace.html"><i class="fa-solid fa-store"></i> Buy Pellets</a>
+                            <a class="action-tile" href="tracking.html"><i class="fa-solid fa-truck-fast"></i> Track Orders</a>
+                            <a class="action-tile" href="pellet-feedback.html"><i class="fa-solid fa-clipboard-check"></i> Batch Feedback</a>
+                            <a class="action-tile" href="consumption.html"><i class="fa-solid fa-fire-flame-curved"></i> Consumption</a>
+                            <a class="action-tile" href="carbon-savings.html"><i class="fa-solid fa-leaf"></i> Carbon Savings</a>
+                            <a class="action-tile" href="billing.html"><i class="fa-solid fa-file-invoice"></i> Billing</a>
+                        </div>
+                    </section>
 
                 </div>
 

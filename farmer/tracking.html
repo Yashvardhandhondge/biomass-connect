@@ -26,7 +26,7 @@
                 <div class="page-header">
                     <div>
                         <h1>Order Tracking</h1>
-                        <p class="page-subtitle">Follow accepted orders from dispatch to delivery and update their status.</p>
+                        <p class="page-subtitle">Follow your orders from pickup to delivery. Transport details are updated by the logistics team.</p>
                     </div>
                     <div class="page-actions">
                         <a class="btn btn-secondary" href="orders.html">
@@ -72,57 +72,6 @@
 
         </div>
 
-    </div>
-
-    <!-- DISPATCH MODAL -->
-
-    <div class="modal-backdrop" id="dispatchModal">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="dispatchTitle">
-            <div class="modal-header">
-                <h3 id="dispatchTitle">Mark as Dispatched</h3>
-                <button type="button" class="modal-close" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="dispatchForm" novalidate>
-                <div class="modal-body">
-                    <input type="hidden" id="dispatchId">
-                    <input type="hidden" id="dispatchMinDate">
-                    <div class="order-summary" id="dispatchSummary"></div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="vehicleNo">Vehicle Number</label>
-                            <input type="text" id="vehicleNo" placeholder="e.g. MH15AB4521" maxlength="13"
-                                   data-filter="upper" data-label="Vehicle number" data-rules="required|vehicle">
-                        </div>
-                        <div class="form-group">
-                            <label for="driverName">Driver Name</label>
-                            <input type="text" id="driverName" placeholder="e.g. Suresh Pawar"
-                                   data-label="Driver name" data-rules="required|name">
-                        </div>
-                        <div class="form-group">
-                            <label for="driverMobile">Driver Mobile</label>
-                            <input type="tel" id="driverMobile" inputmode="numeric" placeholder="10-digit mobile"
-                                   data-label="Driver mobile" data-rules="required|mobile">
-                        </div>
-                        <div class="form-group">
-                            <label for="dispatchDate">Dispatch Date</label>
-                            <input type="date" id="dispatchDate" data-label="Dispatch date"
-                                   data-rules="required|date|notFuture|minDate:#dispatchMinDate">
-                            <small class="form-hint" id="dispatchHint">Today or earlier, not before acceptance</small>
-                        </div>
-                        <div class="form-group full">
-                            <label for="dispatchExpected">Expected Delivery Date</label>
-                            <input type="date" id="dispatchExpected" data-label="Expected delivery date"
-                                   data-rules="required|date|notPast|after:#dispatchDate|maxDate:+60">
-                            <small class="form-hint">Must be after the dispatch date and within 60 days</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-close>Cancel</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-truck-fast"></i> Confirm Dispatch</button>
-                </div>
-            </form>
-        </div>
     </div>
 
     <script src="../js/common/toast.js"></script>

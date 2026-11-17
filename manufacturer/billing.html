@@ -26,7 +26,7 @@
                 <div class="page-header">
                     <div>
                         <h1>Billing &amp; Complaints</h1>
-                        <p class="page-subtitle">Pay farmer invoices, follow up on pellet payments and resolve complaints.</p>
+                        <p class="page-subtitle">Pay farmers for delivered biomass, see payments due from power plants and raise complaints.</p>
                     </div>
                 </div>
 
@@ -39,17 +39,17 @@
                         </div>
                     </div>
                     <div class="kpi-card">
+                        <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        <div>
+                            <div class="kpi-value" id="kpiPaid">₹0</div>
+                            <div class="kpi-label">Paid to Farmers</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
                         <div class="kpi-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
                         <div>
                             <div class="kpi-value" id="kpiReceivable">₹0</div>
                             <div class="kpi-label">Receivable from Power Plants</div>
-                        </div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-icon"><i class="fa-solid fa-file-circle-check"></i></div>
-                        <div>
-                            <div class="kpi-value" id="kpiSettled">0</div>
-                            <div class="kpi-label">Settled Invoices</div>
                         </div>
                     </div>
                     <div class="kpi-card">
@@ -62,139 +62,106 @@
                 </div>
 
                 <div class="tabs" id="billingTabs">
-                    <button type="button" class="tab active" data-tab="invoices"><i class="fa-solid fa-file-invoice"></i> Invoices</button>
-                    <button type="button" class="tab" data-tab="grievances"><i class="fa-solid fa-flag"></i> Raise Grievance</button>
-                    <button type="button" class="tab" data-tab="complaints"><i class="fa-solid fa-headset"></i> Customer Complaints <span class="tab-count" id="complaintCount">0</span></button>
+                    <button type="button" class="tab active" data-tab="payments"><i class="fa-solid fa-indian-rupee-sign"></i> Payments</button>
+                    <button type="button" class="tab" data-tab="complaints"><i class="fa-solid fa-headset"></i> Complaints <span class="tab-count" id="complaintCount">0</span></button>
                 </div>
 
-                <!-- ================= INVOICES ================= -->
+                <!-- ================= PAYMENTS ================= -->
 
-                <div class="tab-panel" data-panel="invoices">
+                <div class="tab-panel" data-panel="payments">
+
                     <section class="card">
                         <div class="card-header">
                             <div>
-                                <div class="card-title">Invoices</div>
-                                <div class="card-subtitle">Purchase invoices you pay and pellet sales invoices you receive (incl. 5% GST)</div>
-                            </div>
-                        </div>
-                        <div class="card-body" style="padding-bottom:0">
-                            <div class="toolbar">
-                                <div class="search">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                    <input type="search" id="invoiceSearch" placeholder="Search invoice, order or party" data-novalidate>
-                                </div>
-                                <select id="invoiceType" data-novalidate aria-label="Invoice type">
-                                    <option value="">All invoices</option>
-                                    <option value="payable">Payable (biomass purchases)</option>
-                                    <option value="receivable">Receivable (pellet sales)</option>
-                                </select>
-                                <select id="invoiceStatus" data-novalidate aria-label="Invoice status">
-                                    <option value="">All statuses</option>
-                                    <option>Unpaid</option>
-                                    <option>Overdue</option>
-                                    <option>Paid</option>
-                                </select>
+                                <div class="card-title">Payable to Farmers</div>
+                                <div class="card-subtitle">Delivered biomass orders. Mark an order as paid once you have paid the farmer; the farmer sees it too.</div>
                             </div>
                         </div>
                         <div class="table-wrap">
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>Invoice No.</th>
-                                        <th>Type</th>
                                         <th>Order</th>
-                                        <th>Party</th>
-                                        <th>Issued</th>
-                                        <th>Due</th>
+                                        <th>Farmer</th>
+                                        <th>Delivered On</th>
                                         <th>Amount</th>
-                                        <th>Status</th>
+                                        <th>Payment</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="invoiceTable"></tbody>
+                                <tbody id="payableTable"></tbody>
                             </table>
                         </div>
                     </section>
-                </div>
-
-                <!-- ================= GRIEVANCES ================= -->
-
-                <div class="tab-panel hidden" data-panel="grievances">
 
                     <section class="card">
                         <div class="card-header">
                             <div>
-                                <div class="card-title">Raise a Grievance</div>
-                                <div class="card-subtitle">Report a payment, quality or delivery issue on one of your orders</div>
+                                <div class="card-title">Receivable from Power Plants</div>
+                                <div class="card-subtitle">Delivered pellet orders. The power plant marks these as paid.</div>
+                            </div>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Order</th>
+                                        <th>Power Plant</th>
+                                        <th>Delivered On</th>
+                                        <th>Amount</th>
+                                        <th>Payment</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="receivableTable"></tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                </div>
+
+                <!-- ================= COMPLAINTS ================= -->
+
+                <div class="tab-panel hidden" data-panel="complaints">
+
+                    <section class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Raise a Complaint</div>
+                                <div class="card-subtitle">The Biomass Connect team reviews every complaint and records the resolution here.</div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <form id="grievanceForm" class="form-grid" novalidate>
+                            <form id="complaintForm" class="form-grid" novalidate>
 
                                 <div class="form-group">
-                                    <label for="gOrder">Order</label>
-                                    <select id="gOrder" data-label="Order" data-rules="required">
+                                    <label for="cOrder">Order</label>
+                                    <select id="cOrder" data-label="Order" data-rules="required">
                                         <option value="">Select an order</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="gCategory">Category</label>
-                                    <select id="gCategory" data-label="Category" data-rules="required">
+                                    <label for="cAgainst">Against</label>
+                                    <input type="text" id="cAgainst" readonly placeholder="Select an order" data-novalidate>
+                                </div>
+
+                                <div class="form-group full">
+                                    <label for="cCategory">Category</label>
+                                    <select id="cCategory" data-label="Category" data-rules="required">
                                         <option value="">Select a category</option>
-                                        <option>Payment issue</option>
-                                        <option>Quality issue</option>
-                                        <option>Quantity mismatch</option>
-                                        <option>Delivery delay</option>
-                                        <option>Damaged goods</option>
-                                        <option>Documentation</option>
-                                        <option>Other</option>
                                     </select>
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="gPriority">Priority</label>
-                                    <select id="gPriority" data-label="Priority" data-rules="required">
-                                        <option value="">Select priority</option>
-                                        <option>Low</option>
-                                        <option selected>Medium</option>
-                                        <option>High</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="gAgainst">Raised Against</label>
-                                    <input type="text" id="gAgainst" readonly placeholder="Select an order" data-novalidate>
-                                </div>
-
                                 <div class="form-group full">
-                                    <label for="gSubject">Subject</label>
-                                    <input type="text" id="gSubject" placeholder="Short summary of the issue"
-                                           data-label="Subject" data-rules="required|text|minlen:5|maxlen:100">
-                                </div>
-
-                                <div class="form-group full">
-                                    <label for="gDescription">Description</label>
-                                    <textarea id="gDescription" rows="4" placeholder="Describe what happened, quantities involved and the resolution you expect"
+                                    <label for="cDescription">Description</label>
+                                    <textarea id="cDescription" rows="4" placeholder="Describe what happened and the amounts or quantities involved"
                                               data-label="Description" data-rules="required|text|minlen:20|maxlen:500"></textarea>
-                                    <small class="form-hint"><span id="gDescCount">0</span>/500 characters (minimum 20)</small>
-                                </div>
-
-                                <div class="form-group full">
-                                    <label for="gAttachment">Attachment <span class="text-subtle">(optional)</span></label>
-                                    <div class="upload-box">
-                                        <div>
-                                            <h4>Supporting document</h4>
-                                            <small>Photos, weighbridge slip or lab report — PDF, JPG or PNG up to 5 MB</small>
-                                        </div>
-                                        <input type="file" id="gAttachment" accept=".pdf,.jpg,.jpeg,.png"
-                                               data-label="Attachment" data-rules="fileTypes:pdf,jpg,jpeg,png|maxSize:5">
-                                    </div>
+                                    <small class="form-hint"><span id="cDescCount">0</span>/500 characters (minimum 20)</small>
                                 </div>
 
                                 <div class="form-actions full">
                                     <button type="reset" class="btn btn-secondary">Clear</button>
-                                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Submit Grievance</button>
+                                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Submit Complaint</button>
                                 </div>
 
                             </form>
@@ -204,8 +171,8 @@
                     <section class="card">
                         <div class="card-header">
                             <div>
-                                <div class="card-title">My Grievances</div>
-                                <div class="card-subtitle">Issues you have raised with farmers and power plants</div>
+                                <div class="card-title">Complaints</div>
+                                <div class="card-subtitle">Complaints you have raised and complaints raised against you</div>
                             </div>
                         </div>
                         <div class="table-wrap">
@@ -214,48 +181,10 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Order</th>
+                                        <th>Raised By</th>
                                         <th>Against</th>
                                         <th>Category</th>
-                                        <th>Subject</th>
-                                        <th>Raised On</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="grievanceTable"></tbody>
-                            </table>
-                        </div>
-                    </section>
-
-                </div>
-
-                <!-- ================= CUSTOMER COMPLAINTS ================= -->
-
-                <div class="tab-panel hidden" data-panel="complaints">
-                    <section class="card">
-                        <div class="card-header">
-                            <div>
-                                <div class="card-title">Customer Complaints</div>
-                                <div class="card-subtitle">Complaints raised by power plants on your pellet orders</div>
-                            </div>
-                            <select id="complaintStatus" data-novalidate aria-label="Complaint status" style="width:auto">
-                                <option value="">All statuses</option>
-                                <option>Open</option>
-                                <option>In Progress</option>
-                                <option>Resolved</option>
-                            </select>
-                        </div>
-                        <div class="table-wrap">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Order</th>
-                                        <th>Power Plant</th>
-                                        <th>Category</th>
-                                        <th>Subject</th>
-                                        <th>Received</th>
-                                        <th>Priority</th>
+                                        <th>Date</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -264,65 +193,13 @@
                             </table>
                         </div>
                     </section>
+
                 </div>
 
             </main>
 
         </div>
 
-    </div>
-
-    <!-- INVOICE VIEW MODAL -->
-
-    <div class="modal-backdrop" id="invoiceModal">
-        <div class="modal modal-lg" role="dialog" aria-modal="true" aria-labelledby="invoiceTitle">
-            <div class="modal-header">
-                <h3 id="invoiceTitle">Invoice</h3>
-                <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body" id="invoiceBody"></div>
-            <div class="modal-footer" id="invoiceFooter"></div>
-        </div>
-    </div>
-
-    <!-- PAY MODAL -->
-
-    <div class="modal-backdrop" id="payModal">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="payTitle">
-            <div class="modal-header">
-                <h3 id="payTitle">Record payment</h3>
-                <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="payForm" novalidate>
-                <div class="modal-body">
-                    <p class="text-muted mb-2" id="payInfo"></p>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="payMethod">Payment Method</label>
-                            <select id="payMethod" data-label="Payment method" data-rules="required">
-                                <option value="">Select method</option>
-                                <option>NEFT / RTGS</option>
-                                <option>UPI</option>
-                                <option>Cheque</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="payDate">Payment Date</label>
-                            <input type="date" id="payDate" data-label="Payment date" data-rules="required|date|notFuture">
-                        </div>
-                        <div class="form-group full">
-                            <label for="payRef">Transaction / Cheque Reference</label>
-                            <input type="text" id="payRef" placeholder="e.g. UTR or cheque number" data-filter="upper"
-                                   data-label="Reference" data-rules="required|alphanumeric|minlen:6|maxlen:30">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-close>Cancel</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-indian-rupee-sign"></i> Confirm Payment</button>
-                </div>
-            </form>
-        </div>
     </div>
 
     <!-- COMPLAINT VIEW MODAL -->
@@ -337,41 +214,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-close>Close</button>
             </div>
-        </div>
-    </div>
-
-    <!-- RESPOND MODAL -->
-
-    <div class="modal-backdrop" id="respondModal">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="respondTitle">
-            <div class="modal-header">
-                <h3 id="respondTitle">Respond to complaint</h3>
-                <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="respondForm" novalidate>
-                <div class="modal-body">
-                    <div class="complaint-quote" id="respondInfo"></div>
-                    <div class="form-grid mt-2">
-                        <div class="form-group full">
-                            <label for="responseText">Your Response</label>
-                            <textarea id="responseText" rows="4" placeholder="Explain the action taken or the resolution offered"
-                                      data-label="Response" data-rules="required|text|minlen:10|maxlen:500"></textarea>
-                        </div>
-                        <div class="form-group full">
-                            <label for="responseStatus">Update Status</label>
-                            <select id="responseStatus" data-label="Status" data-rules="required">
-                                <option value="">Select status</option>
-                                <option>In Progress</option>
-                                <option>Resolved</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-close>Cancel</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-reply"></i> Send Response</button>
-                </div>
-            </form>
         </div>
     </div>
 

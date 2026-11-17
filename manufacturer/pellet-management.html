@@ -26,7 +26,7 @@
                 <div class="page-header">
                     <div>
                         <h1>Manage Pellet Listings</h1>
-                        <p class="page-subtitle">Update stock, prices and quality details, or pause and remove listings.</p>
+                        <p class="page-subtitle">Update quantity, price and quality details, or pause and remove listings. Sold out listings have been bought and cannot be changed.</p>
                     </div>
                     <div class="page-actions">
                         <a class="btn btn-primary" href="pellet-listing.html">
@@ -78,19 +78,13 @@
                         <div class="toolbar">
                             <div class="search">
                                 <i class="fa-solid fa-magnifying-glass"></i>
-                                <input type="search" id="searchInput" placeholder="Search by ID, pellet type or batch" data-novalidate>
+                                <input type="search" id="searchInput" placeholder="Search by listing ID or pellet type" data-novalidate>
                             </div>
                             <select id="statusFilter" data-novalidate aria-label="Filter by status">
                                 <option value="">All statuses</option>
                                 <option>Active</option>
                                 <option>Inactive</option>
                                 <option>Sold Out</option>
-                            </select>
-                            <select id="gradeFilter" data-novalidate aria-label="Filter by grade">
-                                <option value="">All grades</option>
-                                <option>Premium</option>
-                                <option>Standard</option>
-                                <option>Industrial</option>
                             </select>
                         </div>
                     </div>
@@ -176,12 +170,6 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="editBatch">Batch Number</label>
-                            <input type="text" id="editBatch" data-filter="upper" data-label="Batch number"
-                                   data-rules="required|batch|uniqueBatch">
-                        </div>
-
-                        <div class="form-group">
                             <label for="editQuantity">Quantity (Tons)</label>
                             <input type="number" id="editQuantity" step="any" inputmode="decimal"
                                    data-label="Quantity" data-rules="required|number|positive|max:10000|decimals:2">
@@ -199,9 +187,9 @@
                                    data-rules="required|date|notPastIfChanged|maxDate:+180">
                         </div>
 
-                        <div class="form-group full">
-                            <label for="editLocation">Dispatch Location</label>
-                            <input type="text" id="editLocation" data-label="Dispatch location"
+                        <div class="form-group">
+                            <label for="editLocation">Pickup Location</label>
+                            <input type="text" id="editLocation" data-label="Pickup location"
                                    data-rules="required|text|minlen:2|maxlen:100">
                         </div>
 
@@ -253,11 +241,6 @@
                                 <option value="ENplus A2"></option>
                                 <option value="ISO 17225-2"></option>
                             </datalist>
-                        </div>
-
-                        <div class="form-group full">
-                            <label for="editDescription">Description <span class="text-subtle">(optional)</span></label>
-                            <textarea id="editDescription" rows="2" data-label="Description" data-rules="text|maxlen:500"></textarea>
                         </div>
 
                     </div>

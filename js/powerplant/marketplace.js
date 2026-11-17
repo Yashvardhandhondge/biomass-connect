@@ -1,12 +1,18 @@
 // =========================
 // PELLET MARKETPLACE (US028)
+// Each listing is bought as a whole lot. The supplier rating is
+// computed by Store from the batch details power plants submit.
 // =========================
 
 let listings = [];
+let ratings = {};
 
 document.addEventListener("DOMContentLoaded", () => {
 
     listings = Store.get("pelletListings").filter(l => l.status === "Active" && Number(l.quantity) > 0);
+    [...new Set(listings.map(l => l.manufacturer))].forEach(name => {
+        ratings[name] = Store.manufacturerRating(name);
+    });
 
     fillSelect("gradeFilter", listings.map(l => l.grade));
     fillSelect("supplierFilter", listings.map(l => l.manufacturer));
@@ -46,6 +52,15 @@ function numericFilter(id) {
     return Validator.validateField(el) ? Number(el.value) : null;
 }
 
+function ratingScore(l) {
+    const r = ratings[l.manufacturer];
+    return r && r.count ? r.score : -1;   // new suppliers last
+}
+
+function lotTotal(l) {
+    return Number(l.quantity) * Number(l.price);
+}
+
 function render() {
     const q = document.getElementById("searchInput").value.trim().toLowerCase();
     const grade = document.getElementById("gradeFilter").value;
@@ -66,6 +81,7 @@ function render() {
 
     const sorters = {
         newest: (a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""),
+        ratingDesc: (a, b) => ratingScore(b) - ratingScore(a),
         priceAsc: (a, b) => a.price - b.price,
         priceDesc: (a, b) => b.price - a.price,
         cvDesc: (a, b) => b.calorificValue - a.calorificValue,
@@ -112,10 +128,11 @@ function cardHtml(l) {
                     <span><i class="fa-solid fa-industry"></i>${Store.esc(l.manufacturer)}</span>
                     <span><i class="fa-solid fa-location-dot"></i>${Store.esc(l.location)}</span>
                 </div>
+                <div class="listing-rating">${Store.ratingHtml(l.manufacturer)}</div>
 
                 <div class="price-row">
                     <div><strong>${Store.inr(l.price)}</strong><small>/ ton</small></div>
-                    <div class="text-right"><strong>${Plant.num(l.quantity)} t</strong><small>available</small></div>
+                    <div class="text-right"><strong>${Plant.num(l.quantity)} t</strong><small>whole lot</small></div>
                 </div>
 
                 <dl class="spec-grid">
@@ -128,6 +145,7 @@ function cardHtml(l) {
                 </dl>
 
                 <div class="listing-meta">
+                    <span><i class="fa-solid fa-indian-rupee-sign"></i>Lot total ${Store.inr(lotTotal(l))}</span>
                     <span><i class="fa-solid fa-calendar-check"></i>${availability(l)}</span>
                     <span><i class="fa-solid fa-award"></i>${l.certification ? Store.esc(l.certification) : "No certification declared"}</span>
                 </div>
@@ -150,10 +168,12 @@ function openDetails(id) {
     document.getElementById("listingModalBody").innerHTML = `
         <dl class="detail-list">
             <div><dt>Supplier</dt><dd>${Store.esc(l.manufacturer)}</dd></div>
+            <div><dt>Supplier Rating</dt><dd>${Store.ratingHtml(l.manufacturer)}</dd></div>
             <div><dt>Location</dt><dd>${Store.esc(l.location)}</dd></div>
             <div><dt>Grade</dt><dd>${Store.esc(l.grade)}</dd></div>
-            <div><dt>Available Quantity</dt><dd>${Plant.num(l.quantity)} tons</dd></div>
+            <div><dt>Quantity (whole lot)</dt><dd>${Plant.num(l.quantity)} tons</dd></div>
             <div><dt>Price</dt><dd>${Store.inr(l.price)} / ton</dd></div>
+            <div><dt>Lot Total</dt><dd>${Store.inr(lotTotal(l))}</dd></div>
             <div><dt>Availability</dt><dd>${availability(l)}</dd></div>
             <div><dt>Calorific Value</dt><dd>${Plant.num(l.calorificValue, 0)} kcal/kg</dd></div>
             <div><dt>Moisture</dt><dd>${Plant.num(l.moisture)}%</dd></div>
@@ -161,7 +181,8 @@ function openDetails(id) {
             <div><dt>Bulk Density</dt><dd>${Plant.num(l.bulkDensity, 0)} kg/m³</dd></div>
             <div><dt>Diameter × Length</dt><dd>${Plant.num(l.diameter)} × ${Plant.num(l.length)} mm</dd></div>
             <div><dt>Certification</dt><dd>${l.certification ? Store.esc(l.certification) : "—"}</dd></div>
-        </dl>`;
+        </dl>
+        <p class="form-hint mt-3"><i class="fa-solid fa-circle-info"></i> The supplier rating is calculated automatically from the moisture, ash and calorific value that power plants measure on delivered batches.</p>`;
     document.getElementById("listingModalOrder").href = "purchase-orders.html?listing=" + encodeURIComponent(l.id);
     Plant.openModal("listingModal");
 }

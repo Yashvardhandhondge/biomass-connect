@@ -26,7 +26,7 @@
                 <div class="page-header">
                     <div>
                         <h1>Manufacturer Verification</h1>
-                        <p class="page-subtitle">Review pellet manufacturer registrations with GST, PAN, factory licence and pollution consent documents.</p>
+                        <p class="page-subtitle">Review pellet manufacturer registrations and the GST certificate each manufacturer submits.</p>
                     </div>
                 </div>
 
@@ -91,7 +91,6 @@
                                         <th>Location</th>
                                         <th id="idColumn">ID</th>
                                         <th>Submitted</th>
-                                        <th>Documents</th>
                                         <th>Status</th>
                                         <th></th>
                                     </tr>
@@ -140,16 +139,14 @@
                                 <option value="">Select a category</option>
                                 <option>Document unclear</option>
                                 <option>Details mismatch</option>
-                                <option>Expired document</option>
                                 <option>Invalid document</option>
-                                <option>Missing document</option>
                                 <option>Other</option>
                             </select>
                             <small class="error"></small>
                         </div>
                         <div class="form-group full">
                             <label for="rejectReason">Reason for Rejection</label>
-                            <textarea id="rejectReason" rows="4" placeholder="Describe what is wrong and what the applicant should resubmit (min. 10 characters)" data-rules="required|text|minlen:10|maxlen:500"></textarea>
+                            <textarea id="rejectReason" rows="4" placeholder="Describe what is wrong with the document and what to resubmit (min. 10 characters)" data-rules="required|text|minlen:10|maxlen:500"></textarea>
                             <small class="form-hint">Shared with the applicant by email and SMS.</small>
                             <small class="error"></small>
                         </div>

@@ -26,12 +26,7 @@
                 <div class="page-header">
                     <div>
                         <h1>Orders &amp; Transactions</h1>
-                        <p class="page-subtitle">Monitor biomass purchase orders and pellet orders across all participants.</p>
-                    </div>
-                    <div class="page-actions">
-                        <button class="btn btn-secondary" type="button" id="exportBtn">
-                            <i class="fa-solid fa-file-export"></i> Export CSV
-                        </button>
+                        <p class="page-subtitle">Monitor biomass orders and pellet orders, their delivery and payment status.</p>
                     </div>
                 </div>
 
@@ -60,10 +55,10 @@
                         </div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-icon"><i class="fa-solid fa-flag"></i></div>
+                        <div class="kpi-icon"><i class="fa-solid fa-hourglass-half"></i></div>
                         <div>
-                            <div class="kpi-value" id="kpiFlagged">0</div>
-                            <div class="kpi-label">Flagged for Review</div>
+                            <div class="kpi-value" id="kpiUnpaid">0</div>
+                            <div class="kpi-label">Delivered, Payment Pending</div>
                         </div>
                     </div>
                 </div>
@@ -91,12 +86,15 @@
                             </select>
                             <select id="statusFilter" aria-label="Filter by status" data-novalidate>
                                 <option value="All">All Statuses</option>
-                                <option>Pending</option>
-                                <option>Accepted</option>
+                                <option>Placed</option>
+                                <option>Pickup Scheduled</option>
                                 <option>In Transit</option>
                                 <option>Delivered</option>
-                                <option>Rejected</option>
-                                <option>Cancelled</option>
+                            </select>
+                            <select id="paymentFilter" aria-label="Filter by payment" data-novalidate>
+                                <option value="All">All Payments</option>
+                                <option>Pending</option>
+                                <option>Paid</option>
                             </select>
                             <div class="form-group filter-field">
                                 <label for="fromDate">From</label>
@@ -108,9 +106,6 @@
                                 <input type="date" id="toDate" data-label="To date" data-rules="date|notFuture|sameOrAfter:#fromDate">
                                 <small class="error"></small>
                             </div>
-                            <label class="checkbox-row flag-only">
-                                <input type="checkbox" id="flaggedOnly" data-novalidate> Flagged only
-                            </label>
                             <button class="btn btn-ghost" type="button" id="clearFilters">
                                 <i class="fa-solid fa-rotate-left"></i> Clear
                             </button>
@@ -157,47 +152,9 @@
                 <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body" id="viewBody"></div>
-            <div class="modal-footer" id="viewFooter"></div>
-        </div>
-    </div>
-
-    <!-- FLAG ORDER MODAL -->
-
-    <div class="modal-backdrop" id="flagModal" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="flagTitle">
-            <div class="modal-header">
-                <h3 id="flagTitle">Flag Order</h3>
-                <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-close>Close</button>
             </div>
-            <form id="flagForm" novalidate>
-                <div class="modal-body">
-                    <p class="text-muted mb-2" id="flagIntro"></p>
-                    <div class="form-grid">
-                        <div class="form-group full">
-                            <label for="flagCategory">Flag Reason</label>
-                            <select id="flagCategory" data-rules="required">
-                                <option value="">Select a reason</option>
-                                <option>Unusually high value</option>
-                                <option>Price far from market rate</option>
-                                <option>Suspected duplicate order</option>
-                                <option>Delivery overdue</option>
-                                <option>Payment irregularity</option>
-                                <option>Other</option>
-                            </select>
-                            <small class="error"></small>
-                        </div>
-                        <div class="form-group full">
-                            <label for="flagNotes">Notes</label>
-                            <textarea id="flagNotes" rows="4" placeholder="What should the operations team look into? (min. 10 characters)" data-rules="required|text|minlen:10|maxlen:500"></textarea>
-                            <small class="error"></small>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-close>Cancel</button>
-                    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-flag"></i> Flag Order</button>
-                </div>
-            </form>
         </div>
     </div>
 

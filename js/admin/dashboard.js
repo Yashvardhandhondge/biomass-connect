@@ -12,27 +12,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const users = Admin.get("admin_users");
     const verifications = Admin.get("admin_verifications");
-    const disputes = Admin.get("admin_disputes");
+    const complaints = Store.get("complaints");
     const orders = Admin.allOrders();
 
     loadWelcome();
-    loadKpis(users, verifications, disputes, orders);
+    loadKpis(users, verifications, complaints, orders);
     loadQueue(verifications);
     loadTransactions(orders);
     loadRoles(users);
-    loadDisputes(disputes);
+    loadComplaints(complaints);
 });
 
 function loadWelcome() {
     const today = new Date().toLocaleDateString("en-IN", { weekday: "long", day: "2-digit", month: "long", year: "numeric" });
     document.getElementById("welcomeTitle").textContent = "Welcome back, " + Admin.adminName();
-    document.getElementById("welcomeSubtitle").textContent = today + " · Platform overview of users, verifications, orders and disputes.";
+    document.getElementById("welcomeSubtitle").textContent = today + " · Platform overview of users, verifications, orders and complaints.";
 }
 
-function loadKpis(users, verifications, disputes, orders) {
+function loadKpis(users, verifications, complaints, orders) {
     const byRole = role => users.filter(u => u.role === role).length;
     const activeUsers = users.filter(u => u.status === "Active").length;
-    const gmv = orders.filter(Admin.isBillable).reduce((sum, o) => sum + o.total, 0);
 
     document.getElementById("kpiUsers").textContent = users.length;
     document.getElementById("kpiUsersTrend").textContent = activeUsers + " active";
@@ -41,8 +40,8 @@ function loadKpis(users, verifications, disputes, orders) {
     document.getElementById("kpiPlants").textContent = byRole("Power Plant");
     document.getElementById("kpiPending").textContent = verifications.filter(v => v.status === "Pending").length;
     document.getElementById("kpiActiveOrders").textContent = orders.filter(Admin.isActiveOrder).length;
-    document.getElementById("kpiDisputes").textContent = disputes.filter(d => d.status !== "Resolved").length;
-    document.getElementById("kpiGmv").textContent = Store.inr(gmv);
+    document.getElementById("kpiDisputes").textContent = complaints.filter(c => c.status !== "Resolved").length;
+    document.getElementById("kpiGmv").textContent = Store.inr(orders.reduce((sum, o) => sum + o.total, 0));
 }
 
 function loadQueue(verifications) {
@@ -67,7 +66,7 @@ function loadQueue(verifications) {
             <td>${Store.esc(Admin.ROLE_LABEL[v.role] || v.role)}</td>
             <td>${Store.esc(v.district)}, ${Store.esc(v.state)}</td>
             <td>${Store.date(v.submitted)}</td>
-            <td>${(v.docs || []).length} files</td>
+            <td>${Store.esc(v.docType || "—")}</td>
             <td class="text-right">
                 <a class="btn btn-secondary btn-sm" href="${VERIFY_PAGE[v.role]}?id=${encodeURIComponent(v.id)}">Review</a>
             </td>
@@ -91,7 +90,7 @@ function loadTransactions(orders) {
             <td>${Store.esc(o.seller)}</td>
             <td>${Store.inr(o.total)}</td>
             <td>${Store.date(o.orderDate)}</td>
-            <td><span class="${Store.badge(o.status)}">${Store.esc(o.status)}</span></td>
+            <td>${Store.statusBadge(o.status)}</td>
         </tr>
     `).join("");
 }
@@ -114,22 +113,22 @@ function loadRoles(users) {
     }).join("");
 }
 
-function loadDisputes(disputes) {
+function loadComplaints(complaints) {
     const el = document.getElementById("disputeList");
-    const open = disputes.filter(d => d.status !== "Resolved").slice(0, 4);
+    const open = complaints.filter(c => c.status !== "Resolved").slice(0, 4);
 
     if (!open.length) {
-        el.innerHTML = `<div class="empty-state"><i class="fa-solid fa-circle-check"></i>No open disputes</div>`;
+        el.innerHTML = `<div class="empty-state"><i class="fa-solid fa-circle-check"></i>No open complaints</div>`;
         return;
     }
 
-    el.innerHTML = open.map(d => `
-        <a class="mini-item" href="dispute-management.html?id=${encodeURIComponent(d.id)}">
+    el.innerHTML = open.map(c => `
+        <a class="mini-item" href="dispute-management.html?id=${encodeURIComponent(c.id)}">
             <div>
-                <div class="fw-600">${Store.esc(d.id)} · ${Store.esc(d.category)}</div>
-                <small class="text-muted">${Store.esc(d.raisedBy)} vs ${Store.esc(d.against)}</small>
+                <div class="fw-600">${Store.esc(c.id)} · ${Store.esc(c.category)}</div>
+                <small class="text-muted">${Store.esc(c.raisedBy)} vs ${Store.esc(c.against)}</small>
             </div>
-            <span class="${Store.badge(d.status)}">${Store.esc(d.status)}</span>
+            ${Store.statusBadge(c.status)}
         </a>
     `).join("");
 }

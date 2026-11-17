@@ -2,7 +2,7 @@
    page-specific layout only. Shared components live in ../theme.css */
 
 .modal-lg {
-    max-width: 860px;
+    max-width: 720px;
 }
 
 .tab .count {
@@ -38,56 +38,7 @@
     margin: 22px 0 10px;
 }
 
-/* Documents */
-
-.doc-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
-    gap: 16px;
-}
-
-.doc-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.doc-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--surface);
-    font: inherit;
-    text-align: left;
-    cursor: pointer;
-    color: var(--text);
-}
-
-.doc-item i {
-    font-size: 18px;
-    color: var(--primary);
-}
-
-.doc-item strong {
-    display: block;
-    font-size: 13px;
-}
-
-.doc-item small {
-    font-size: 12px;
-    color: var(--text-subtle);
-    word-break: break-all;
-}
-
-.doc-item:hover,
-.doc-item.active {
-    border-color: var(--primary-border);
-    background: var(--primary-softer);
-}
+/* Submitted document */
 
 .doc-preview {
     border: 1.5px dashed var(--border-strong);
@@ -183,10 +134,6 @@
 .note-danger { border-left-color: var(--danger); }
 
 @media (max-width: 768px) {
-    .doc-layout {
-        grid-template-columns: 1fr;
-    }
-
     .applicant-head {
         flex-wrap: wrap;
     }

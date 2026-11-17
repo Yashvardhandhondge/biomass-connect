@@ -26,11 +26,11 @@
                 <div class="page-header">
                     <div>
                         <h1>Pellet Marketplace</h1>
-                        <p class="page-subtitle">Explore biomass pellets offered by verified manufacturers and compare quality specifications.</p>
+                        <p class="page-subtitle">Compare pellets from verified manufacturers. Each listing is sold as one whole lot.</p>
                     </div>
                     <div class="page-actions">
-                        <a class="btn btn-secondary" href="purchase-orders.html">
-                            <i class="fa-solid fa-file-signature"></i> My Orders
+                        <a class="btn btn-secondary" href="tracking.html">
+                            <i class="fa-solid fa-truck-fast"></i> My Orders
                         </a>
                     </div>
                 </div>
@@ -47,6 +47,7 @@
                             </div>
                             <select id="sortBy" aria-label="Sort listings" data-novalidate>
                                 <option value="newest">Newest first</option>
+                                <option value="ratingDesc">Supplier rating: high to low</option>
                                 <option value="priceAsc">Price: low to high</option>
                                 <option value="priceDesc">Price: high to low</option>
                                 <option value="cvDesc">Calorific value: high to low</option>
@@ -92,8 +93,9 @@
                     </div>
                 </section>
 
-                <div class="flex between mb-2">
+                <div class="flex between wrap mb-2">
                     <span class="text-muted" id="resultCount"></span>
+                    <span class="form-hint rating-note"><i class="fa-solid fa-star"></i> Supplier ratings are calculated automatically from the quality of batches delivered to power plants.</span>
                 </div>
 
                 <div class="listing-grid" id="listingGrid"></div>

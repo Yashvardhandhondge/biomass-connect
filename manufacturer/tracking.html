@@ -37,17 +37,17 @@
 
                 <div class="kpi-grid">
                     <div class="kpi-card">
-                        <div class="kpi-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+                        <div class="kpi-icon"><i class="fa-solid fa-file-signature"></i></div>
                         <div>
-                            <div class="kpi-value" id="kpiPending">0</div>
-                            <div class="kpi-label">Awaiting Farmer</div>
+                            <div class="kpi-value" id="kpiPlaced">0</div>
+                            <div class="kpi-label">Placed</div>
                         </div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        <div class="kpi-icon"><i class="fa-solid fa-calendar-check"></i></div>
                         <div>
-                            <div class="kpi-value" id="kpiAccepted">0</div>
-                            <div class="kpi-label">Accepted</div>
+                            <div class="kpi-value" id="kpiPickup">0</div>
+                            <div class="kpi-label">Pickup Scheduled</div>
                         </div>
                     </div>
                     <div class="kpi-card">
@@ -88,7 +88,7 @@
                         <div class="order-list" id="orderList"></div>
                     </section>
 
-                    <!-- TRACKING DETAIL -->
+                    <!-- TRACKING DETAIL (read only) -->
 
                     <section class="card" id="trackDetail"></section>
 
@@ -98,42 +98,6 @@
 
         </div>
 
-    </div>
-
-    <!-- CONFIRM RECEIPT MODAL -->
-
-    <div class="modal-backdrop" id="receiptModal">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="receiptTitle">
-            <div class="modal-header">
-                <h3 id="receiptTitle">Confirm Receipt</h3>
-                <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="receiptForm" novalidate>
-                <div class="modal-body">
-                    <p class="text-muted mb-2" id="receiptInfo"></p>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="receivedDate">Received Date</label>
-                            <input type="date" id="receivedDate" data-rules="required|date|notFuture">
-                        </div>
-                        <div class="form-group">
-                            <label for="receivedQty">Received Quantity (Tons)</label>
-                            <input type="number" id="receivedQty" step="any" inputmode="decimal"
-                                   data-label="Received quantity" data-rules="required|number|positive|max:10000|decimals:2">
-                        </div>
-                        <div class="form-group full">
-                            <label for="receiptRemarks">Quality Remarks <span class="text-subtle">(optional)</span></label>
-                            <textarea id="receiptRemarks" rows="3" placeholder="Condition of material, moisture observed, etc."
-                                      data-label="Quality remarks" data-rules="text|maxlen:300"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-close>Cancel</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Confirm Receipt</button>
-                </div>
-            </form>
-        </div>
     </div>
 
     <script src="../js/common/toast.js"></script>

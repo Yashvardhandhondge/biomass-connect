@@ -21,27 +21,6 @@
     color: var(--primary-dark);
 }
 
-.order-summary {
-    padding: 12px 14px;
-    margin-bottom: 18px;
-    border-radius: var(--radius-sm);
-    background: var(--primary-softer);
-    border: 1px solid var(--primary-border);
-    font-size: 14px;
-}
-
-.order-closed {
-    padding: 12px 14px;
-    border-radius: var(--radius-sm);
-    background: var(--danger-soft);
-    color: var(--danger);
-    font-size: 14px;
-}
-
-.detail-list .span-full {
-    grid-column: 1 / -1;
-}
-
 .modal.modal-lg {
     max-width: 720px;
 }

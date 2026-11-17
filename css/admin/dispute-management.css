@@ -1,10 +1,6 @@
 /* Admin dispute management — page-specific layout only.
    Shared components live in ../theme.css */
 
-.modal-lg {
-    max-width: 760px;
-}
-
 .tab .count {
     font-weight: 600;
 }

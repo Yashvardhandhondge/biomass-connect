@@ -1,21 +1,14 @@
 // =========================
 // MANAGE PELLET LISTINGS (US022)
+// A power plant buys the whole listing; it then becomes "Sold Out"
+// and can no longer be edited, paused or removed.
 // =========================
 
 const MANUFACTURER = "GreenPellet Industries";
-const OPEN_ORDER = ["Pending", "Accepted", "In Transit"];
 
 let editingId = null;
 
-/* ---------- Custom rules (same as the create page) ---------- */
-
-Validator.addRule("uniqueBatch", (v, p, el) => {
-    const exclude = (el && el.dataset.excludeId) || "";
-    const taken = Store.get("pelletListings").some(l =>
-        l.manufacturer === MANUFACTURER && l.id !== exclude &&
-        String(l.batchNo || "").toLowerCase() === v.toLowerCase());
-    return taken ? "Batch number " + v.toUpperCase() + " is already used by another listing" : "";
-});
+/* ---------- Grade rules (same as the create page) ---------- */
 
 function isPremium(el) {
     const grade = el && el.form && el.form.querySelector("[data-grade-select]");
@@ -40,7 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("searchInput").addEventListener("input", render);
     document.getElementById("statusFilter").addEventListener("change", render);
-    document.getElementById("gradeFilter").addEventListener("change", render);
 
     document.getElementById("listingTable").addEventListener("click", e => {
         const btn = e.target.closest("button[data-action]");
@@ -68,8 +60,9 @@ function myListings() {
     return Store.get("pelletListings").filter(l => l.manufacturer === MANUFACTURER);
 }
 
-function openOrders(listingId) {
-    return Store.get("pelletOrders").filter(o => o.listingId === listingId && OPEN_ORDER.includes(o.status));
+function findListing(id) {
+    const l = Store.find("pelletListings", id);
+    return l && l.manufacturer === MANUFACTURER ? l : null;
 }
 
 function render() {
@@ -85,12 +78,10 @@ function render() {
 
     const search = document.getElementById("searchInput").value.trim().toLowerCase();
     const status = document.getElementById("statusFilter").value;
-    const grade = document.getElementById("gradeFilter").value;
 
     const list = all.filter(l => {
         if (status && l.status !== status) return false;
-        if (grade && l.grade !== grade) return false;
-        if (search && ![l.id, l.pelletType, l.batchNo].join(" ").toLowerCase().includes(search)) return false;
+        if (search && ![l.id, l.pelletType].join(" ").toLowerCase().includes(search)) return false;
         return true;
     });
 
@@ -107,27 +98,26 @@ function render() {
 
     table.innerHTML = list.map(l => {
         const id = Store.esc(l.id);
-        const toggleBtn = l.status === "Active"
-            ? `<button class="btn btn-secondary btn-sm btn-icon" data-action="toggle" data-id="${id}" title="Deactivate" aria-label="Deactivate ${id}"><i class="fa-solid fa-pause"></i></button>`
-            : `<button class="btn btn-secondary btn-sm btn-icon" data-action="toggle" data-id="${id}" title="Activate" aria-label="Activate ${id}"><i class="fa-solid fa-play"></i></button>`;
+        const view = `<button class="btn btn-secondary btn-sm btn-icon" data-action="view" data-id="${id}" title="View" aria-label="View ${id}"><i class="fa-solid fa-eye"></i></button>`;
+        const actions = l.status === "Sold Out"
+            ? view + `<span class="locked-note" title="Bought by a power plant. Sold out listings cannot be edited or removed."><i class="fa-solid fa-lock"></i> Sold</span>`
+            : view +
+              `<button class="btn btn-secondary btn-sm btn-icon" data-action="edit" data-id="${id}" title="Edit" aria-label="Edit ${id}"><i class="fa-solid fa-pen"></i></button>` +
+              (l.status === "Active"
+                ? `<button class="btn btn-secondary btn-sm btn-icon" data-action="toggle" data-id="${id}" title="Deactivate" aria-label="Deactivate ${id}"><i class="fa-solid fa-pause"></i></button>`
+                : `<button class="btn btn-secondary btn-sm btn-icon" data-action="toggle" data-id="${id}" title="Activate" aria-label="Activate ${id}"><i class="fa-solid fa-play"></i></button>`) +
+              `<button class="btn btn-danger btn-sm btn-icon" data-action="remove" data-id="${id}" title="Remove" aria-label="Remove ${id}"><i class="fa-solid fa-trash-can"></i></button>`;
         return `
         <tr>
-            <td class="fw-600 listing-id">${id}<small>${l.batchNo ? "Batch " + Store.esc(l.batchNo) : "No batch no."}</small></td>
+            <td class="fw-600">${id}</td>
             <td>${Store.esc(l.pelletType)}</td>
             <td>${Store.esc(l.grade)}</td>
             <td>${Store.esc(l.quantity)} t</td>
             <td>${Store.inr(l.price)}</td>
             <td class="quality-cell">${Store.esc(l.moisture)}% / ${Store.esc(l.ashContent)}% / ${Store.esc(l.calorificValue)}</td>
             <td>${Store.date(l.availableFrom)}</td>
-            <td><span class="${Store.badge(l.status)}">${Store.esc(l.status)}</span></td>
-            <td>
-                <div class="table-actions">
-                    <button class="btn btn-secondary btn-sm btn-icon" data-action="view" data-id="${id}" title="View" aria-label="View ${id}"><i class="fa-solid fa-eye"></i></button>
-                    <button class="btn btn-secondary btn-sm btn-icon" data-action="edit" data-id="${id}" title="Edit" aria-label="Edit ${id}"><i class="fa-solid fa-pen"></i></button>
-                    ${toggleBtn}
-                    <button class="btn btn-danger btn-sm btn-icon" data-action="remove" data-id="${id}" title="Remove" aria-label="Remove ${id}"><i class="fa-solid fa-trash-can"></i></button>
-                </div>
-            </td>
+            <td>${Store.statusBadge(l.status)}</td>
+            <td><div class="table-actions">${actions}</div></td>
         </tr>`;
     }).join("");
 }
@@ -135,26 +125,26 @@ function render() {
 /* ---------- View ---------- */
 
 function viewListing(id) {
-    const l = Store.find("pelletListings", id);
+    const l = findListing(id);
     if (!l) return notFound();
 
     const item = (label, value) => `<div><dt>${label}</dt><dd>${value}</dd></div>`;
-    const orders = openOrders(id).length;
+    const order = l.status === "Sold Out" ? Store.get("pelletOrders").find(o => o.listingId === l.id) : null;
 
     document.getElementById("viewTitle").textContent = l.id + " · " + l.pelletType;
     document.getElementById("viewBody").innerHTML = `
         <div class="view-section">
             <h4>Product</h4>
             <dl class="detail-list">
-                ${item("Status", `<span class="${Store.badge(l.status)}">${Store.esc(l.status)}</span>`)}
+                ${item("Status", Store.statusBadge(l.status))}
                 ${item("Grade", Store.esc(l.grade))}
-                ${item("Batch number", Store.esc(l.batchNo || "—"))}
                 ${item("Quantity", Store.esc(l.quantity) + " tons")}
                 ${item("Price / ton", Store.inr(l.price))}
-                ${item("Stock value", Store.inr(Math.round(l.quantity * l.price)))}
-                ${item("Production date", Store.date(l.productionDate))}
+                ${item("Listing value", Store.inr(Math.round(l.quantity * l.price)))}
                 ${item("Available from", Store.date(l.availableFrom))}
-                ${item("Location", Store.esc(l.location))}
+                ${item("Pickup location", Store.esc(l.location || "—"))}
+                ${item("Certification", Store.esc(l.certification || "—"))}
+                ${item("Listed on", Store.date(l.createdAt))}
             </dl>
         </div>
         <div class="view-section">
@@ -168,15 +158,15 @@ function viewListing(id) {
                 ${item("Bulk density", Store.esc(l.bulkDensity) + " kg/m³")}
             </dl>
         </div>
+        ${order ? `
         <div class="view-section">
-            <h4>Certification &amp; orders</h4>
+            <h4>Order</h4>
             <dl class="detail-list">
-                ${item("Certification", Store.esc(l.certification || "—"))}
-                ${item("Quality report", Store.esc(l.qualityReport || "—"))}
-                ${item("Open orders", orders)}
+                ${item("Order ID", Store.esc(order.id))}
+                ${item("Bought by", Store.esc(order.powerPlant))}
+                ${item("Order status", Store.statusBadge(order.status))}
             </dl>
-            ${l.description ? `<p class="text-muted mt-2" style="font-size:13px">${Store.esc(l.description)}</p>` : ""}
-        </div>`;
+        </div>` : ""}`;
 
     openModal("viewModal");
 }
@@ -186,7 +176,6 @@ function viewListing(id) {
 const FIELDS = {
     editPelletType: "pelletType",
     editGrade: "grade",
-    editBatch: "batchNo",
     editQuantity: "quantity",
     editPrice: "price",
     editAvailableFrom: "availableFrom",
@@ -197,22 +186,28 @@ const FIELDS = {
     editAsh: "ashContent",
     editCalorific: "calorificValue",
     editBulk: "bulkDensity",
-    editCertification: "certification",
-    editDescription: "description"
+    editCertification: "certification"
 };
 
 const NUMERIC = ["quantity", "price", "diameter", "length", "moisture", "ashContent", "calorificValue", "bulkDensity"];
 
+function soldOut(l) {
+    if (l.status !== "Sold Out") return false;
+    showToast(l.id + " has been bought by a power plant and can no longer be changed.", "warning");
+    render();
+    return true;
+}
+
 function openEdit(id) {
-    const l = Store.find("pelletListings", id);
+    const l = findListing(id);
     if (!l) return notFound();
+    if (soldOut(l)) return;
 
     editingId = id;
     Object.entries(FIELDS).forEach(([fieldId, key]) => {
         document.getElementById(fieldId).value = l[key] == null ? "" : l[key];
     });
 
-    document.getElementById("editBatch").dataset.excludeId = id;
     document.getElementById("editAvailableFrom").dataset.original = l.availableFrom || "";
 
     document.getElementById("editTitle").textContent = "Edit " + l.id;
@@ -223,16 +218,21 @@ function saveEdit() {
     const form = document.getElementById("editForm");
     if (!Validator.validateForm(form)) return;
 
-    const current = Store.find("pelletListings", editingId);
+    const current = findListing(editingId);
     if (!current) {
         closeModal("editModal");
         return notFound();
+    }
+    if (current.status === "Sold Out") {
+        closeModal("editModal");
+        soldOut(current);
+        return;
     }
 
     const patch = {};
     Object.entries(FIELDS).forEach(([fieldId, key]) => {
         const raw = document.getElementById(fieldId).value.trim();
-        patch[key] = NUMERIC.includes(key) ? Number(raw) : (key === "batchNo" ? raw.toUpperCase() : raw);
+        patch[key] = NUMERIC.includes(key) ? Number(raw) : raw;
     });
 
     const changed = Object.keys(patch).filter(k => String(patch[k]) !== String(current[k] == null ? "" : current[k]));
@@ -242,28 +242,18 @@ function saveEdit() {
         return;
     }
 
-    let relisted = false;
-    if (current.status === "Sold Out" && patch.quantity > 0) {
-        patch.status = "Active";
-        relisted = true;
-    }
-
     Store.update("pelletListings", editingId, patch);
     closeModal("editModal");
-    showToast(current.id + " updated successfully" + (relisted ? " and relisted as Active." : "."), "success", { title: "Listing updated" });
+    showToast(current.id + " updated successfully.", "success", { title: "Listing updated" });
     render();
 }
 
-/* ---------- Toggle / remove ---------- */
+/* ---------- Activate / deactivate / remove ---------- */
 
 function toggleListing(id) {
-    const l = Store.find("pelletListings", id);
+    const l = findListing(id);
     if (!l) return notFound();
-
-    if (l.status === "Sold Out") {
-        showToast("This listing is sold out. Edit it and add stock to relist it.", "warning");
-        return;
-    }
+    if (soldOut(l)) return;
 
     const next = l.status === "Active" ? "Inactive" : "Active";
     Store.update("pelletListings", id, { status: next });
@@ -274,15 +264,9 @@ function toggleListing(id) {
 }
 
 async function removeListing(id) {
-    const l = Store.find("pelletListings", id);
+    const l = findListing(id);
     if (!l) return notFound();
-
-    const open = openOrders(id);
-    if (open.length) {
-        showToast(l.id + " has " + open.length + " open order" + (open.length > 1 ? "s" : "") +
-            " (" + open.map(o => o.id).join(", ") + "). Complete or reject them before removing this listing.", "error", { title: "Cannot remove listing" });
-        return;
-    }
+    if (soldOut(l)) return;
 
     const ok = await confirmDialog({
         title: "Remove pellet listing?",

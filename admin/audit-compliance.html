@@ -26,7 +26,7 @@
                 <div class="page-header">
                     <div>
                         <h1>Audit &amp; Compliance</h1>
-                        <p class="page-subtitle">Track platform activity and issue biomass co-firing compliance certificates to coal power plants.</p>
+                        <p class="page-subtitle">Track platform activity and issue Government Norms Compliance Certificates to coal power plants.</p>
                     </div>
                 </div>
 
@@ -77,7 +77,6 @@
                             <div class="card-title">Audit Log</div>
                             <div class="card-subtitle" id="logCount">0 entries</div>
                         </div>
-                        <button class="btn btn-secondary btn-sm" type="button" id="exportLogsBtn"><i class="fa-solid fa-file-export"></i> Export CSV</button>
                     </div>
 
                     <div class="card-body">
@@ -85,7 +84,7 @@
                         <form class="toolbar filters" id="logFilters" novalidate>
                             <div class="search">
                                 <i class="fa-solid fa-magnifying-glass"></i>
-                                <input type="search" id="logSearch" placeholder="Search user, action or IP address" aria-label="Search audit log" data-novalidate>
+                                <input type="search" id="logSearch" placeholder="Search user or action" aria-label="Search audit log" data-novalidate>
                             </div>
                             <select id="logRole" aria-label="Filter by role" data-novalidate>
                                 <option value="All">All Roles</option>
@@ -119,7 +118,6 @@
                                         <th>Role</th>
                                         <th>Action</th>
                                         <th>Module</th>
-                                        <th>IP Address</th>
                                     </tr>
                                 </thead>
                                 <tbody id="logTable"></tbody>
@@ -141,8 +139,8 @@
                     <section class="card">
                         <div class="card-header">
                             <div>
-                                <div class="card-title">Generate Compliance Certificate</div>
-                                <div class="card-subtitle">Certify a coal power plant's biomass co-firing for a reporting period</div>
+                                <div class="card-title">Issue Compliance Certificate</div>
+                                <div class="card-subtitle">Government Norms Compliance Certificate for a coal power plant that follows government norms</div>
                             </div>
                         </div>
                         <div class="card-body">
@@ -151,61 +149,41 @@
 
                                     <div class="form-group">
                                         <label for="certPlant">Coal Power Plant</label>
-                                        <select id="certPlant" data-rules="required">
+                                        <select id="certPlant" data-label="Power plant" data-rules="required">
                                             <option value="">Select power plant</option>
                                         </select>
+                                        <small class="form-hint">Only approved, active power plants are listed.</small>
                                         <small class="error"></small>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="certFrom">Reporting Period From</label>
-                                        <input type="date" id="certFrom" data-label="Period start" data-rules="required|date|notFuture">
-                                        <small class="error"></small>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="certTo">Reporting Period To</label>
-                                        <input type="date" id="certTo" data-label="Period end" data-rules="required|date|notFuture|sameOrAfter:#certFrom">
-                                        <small class="error"></small>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="certTons">Biomass Co-fired (tons)</label>
-                                        <input type="number" id="certTons" placeholder="e.g. 1850" step="0.01" inputmode="decimal" data-label="Biomass co-fired" data-rules="required|number|positive|max:1000000|decimals:2">
-                                        <small class="form-hint" id="deliveredHint">Select a plant and period to see platform deliveries.</small>
-                                        <small class="error"></small>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="certPct">Co-firing Ratio (%)</label>
-                                        <input type="number" id="certPct" placeholder="e.g. 5.5" step="0.01" inputmode="decimal" data-label="Co-firing ratio" data-rules="required|number|positive|max:100|decimals:2">
-                                        <small class="form-hint">Mandated minimum is 5%.</small>
-                                        <small class="error"></small>
+                                        <label for="certNo">Certificate No.</label>
+                                        <input type="text" id="certNo" readonly data-novalidate>
+                                        <small class="form-hint">Generated automatically.</small>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="certIssue">Issue Date</label>
-                                        <input type="date" id="certIssue" data-label="Issue date" data-rules="required|date|notFuture|sameOrAfter:#certTo">
+                                        <input type="date" id="certIssue" data-label="Issue date" data-rules="required|date|notFuture">
                                         <small class="error"></small>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="certValid">Valid Until</label>
-                                        <input type="date" id="certValid" data-label="Valid until" data-rules="required|date|after:#certIssue|maxDate:+1095">
-                                        <small class="form-hint">Maximum validity is 3 years from today.</small>
+                                        <input type="date" id="certValid" data-label="Valid until" data-rules="required|date|after:#certIssue">
                                         <small class="error"></small>
                                     </div>
 
                                     <div class="form-group span-2">
                                         <label for="certRemarks">Remarks (optional)</label>
-                                        <input type="text" id="certRemarks" placeholder="e.g. Verified against plant fuel logs" data-rules="text|maxlen:200">
+                                        <input type="text" id="certRemarks" placeholder="e.g. Biomass co-firing as per the Ministry of Power policy" data-rules="text|maxlen:200">
                                         <small class="error"></small>
                                     </div>
 
                                 </div>
                                 <div class="form-actions">
-                                    <button class="btn btn-secondary" type="reset" id="certReset">Clear</button>
-                                    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-certificate"></i> Generate Certificate</button>
+                                    <button class="btn btn-secondary" type="reset">Clear</button>
+                                    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-certificate"></i> Issue Certificate</button>
                                 </div>
                             </form>
                         </div>
@@ -224,13 +202,11 @@
                                     <tr>
                                         <th>Certificate No.</th>
                                         <th>Power Plant</th>
-                                        <th>Reporting Period</th>
-                                        <th>Co-fired</th>
-                                        <th>Ratio</th>
-                                        <th>Issued</th>
+                                        <th>Issue Date</th>
                                         <th>Valid Until</th>
                                         <th>Status</th>
-                                        <th>Actions</th>
+                                        <th>Issued By</th>
+                                        <th>Remarks</th>
                                     </tr>
                                 </thead>
                                 <tbody id="certTable"></tbody>
@@ -244,22 +220,6 @@
 
         </div>
 
-    </div>
-
-    <!-- CERTIFICATE MODAL -->
-
-    <div class="modal-backdrop" id="certModal" aria-hidden="true">
-        <div class="modal modal-lg" role="dialog" aria-modal="true" aria-labelledby="certModalTitle">
-            <div class="modal-header">
-                <h3 id="certModalTitle">Compliance Certificate</h3>
-                <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body" id="certModalBody"></div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-close>Close</button>
-                <button class="btn btn-primary" type="button" id="certDownloadBtn"><i class="fa-solid fa-download"></i> Download</button>
-            </div>
-        </div>
     </div>
 
     <script src="../js/common/toast.js"></script>

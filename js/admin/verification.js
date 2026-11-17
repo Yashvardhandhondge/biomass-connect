@@ -3,6 +3,8 @@
 // Shared by farmer-verification (US039), powerplant-verification (US040)
 // and manufacturer-verification (US041).
 // The page sets <body data-verify-role="farmer|manufacturer|powerplant">.
+// Each applicant submits ONE document: Aadhaar card (farmer) or
+// GST certificate (manufacturer / power plant).
 // =========================
 
 const VERIFY_KEY = "admin_verifications";
@@ -11,55 +13,28 @@ const VERIFY_CONFIG = {
     farmer: {
         label: "Farmer",
         idLabel: "Aadhaar No.",
-        idValue: v => v.details.aadhaar,
-        fields: [
-            ["Aadhaar Number", v => v.details.aadhaar],
-            ["Land Holding", v => v.details.landArea + " acres"],
-            ["Primary Crops", v => v.details.crops],
-            ["Village / Taluka", v => v.location],
-            ["District", v => v.district],
-            ["State", v => v.state]
-        ],
+        locationLabel: "Village / Taluka",
         checks: [
-            "Aadhaar details are legible and match the applicant name",
-            "Land record (7/12 extract) is in the applicant's name",
-            "Bank passbook name matches the Aadhaar card"
+            "Aadhaar card is clear and readable",
+            "Name and Aadhaar number match the registration details"
         ]
     },
     manufacturer: {
         label: "Manufacturer",
         idLabel: "GSTIN",
-        idValue: v => v.details.gstin,
-        fields: [
-            ["GSTIN", v => v.details.gstin],
-            ["PAN", v => v.details.pan],
-            ["Production Capacity", v => v.details.capacity + " tons/day"],
-            ["Factory Location", v => v.location],
-            ["District", v => v.district],
-            ["State", v => v.state]
-        ],
+        locationLabel: "Factory Location",
         checks: [
-            "GSTIN and PAN belong to the same legal entity",
-            "Factory licence is valid and covers pellet manufacturing",
-            "Pollution consent (CTO) is current and not expired"
+            "GST certificate is clear and readable",
+            "Business name and GSTIN match the registration details"
         ]
     },
     powerplant: {
         label: "Power Plant",
         idLabel: "GSTIN",
-        idValue: v => v.details.gstin,
-        fields: [
-            ["GSTIN", v => v.details.gstin],
-            ["Installed Capacity", v => Number(v.details.capacity).toLocaleString("en-IN") + " MW"],
-            ["Co-firing Target", v => v.details.target + "%"],
-            ["Plant Location", v => v.location],
-            ["District", v => v.district],
-            ["State", v => v.state]
-        ],
+        locationLabel: "Plant Location",
         checks: [
-            "GST certificate matches the registered plant entity",
-            "Environmental clearance covers biomass co-firing",
-            "SPCB consent to operate is valid for the current period"
+            "GST certificate is clear and readable",
+            "Plant name and GSTIN match the registration details"
         ]
     }
 };
@@ -123,7 +98,7 @@ function renderTable() {
     const q = document.getElementById("searchInput").value.trim().toLowerCase();
     const list = all
         .filter(v => activeTab === "All" || v.status === activeTab)
-        .filter(v => !q || [v.name, v.email, v.mobile, v.id, v.district, v.location, CFG.idValue(v)]
+        .filter(v => !q || [v.name, v.email, v.mobile, v.id, v.district, v.location, v.docNumber]
             .some(x => String(x || "").toLowerCase().includes(q)))
         .sort((a, b) => activeTab === "Pending"
             ? a.submitted.localeCompare(b.submitted)
@@ -135,7 +110,7 @@ function renderTable() {
         const msg = q ? "No applications match your search" :
             activeTab === "Pending" ? "No pending " + CFG.label.toLowerCase() + " registrations — you're all caught up" :
             "No " + activeTab.toLowerCase() + " applications";
-        table.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="fa-solid fa-folder-open"></i>${Store.esc(msg)}</div></td></tr>`;
+        table.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="fa-solid fa-folder-open"></i>${Store.esc(msg)}</div></td></tr>`;
         return;
     }
 
@@ -150,10 +125,9 @@ function renderTable() {
                 <small class="text-muted">${Store.esc(v.mobile)}</small>
             </td>
             <td>${Store.esc(v.district)}, ${Store.esc(v.state)}</td>
-            <td>${Store.esc(CFG.idValue(v))}</td>
+            <td>${Store.esc(v.docNumber || "—")}</td>
             <td>${Store.date(v.submitted)}</td>
-            <td>${(v.docs || []).length} files</td>
-            <td><span class="${Store.badge(v.status)}">${Store.esc(v.status)}</span></td>
+            <td>${Store.statusBadge(v.status)}</td>
             <td class="text-right">
                 <button class="btn ${v.status === "Pending" ? "btn-primary" : "btn-secondary"} btn-sm" type="button" data-review="${Store.esc(v.id)}">
                     ${v.status === "Pending" ? "Review" : "View"}
@@ -166,7 +140,7 @@ function renderTable() {
 /* ---------- review modal ---------- */
 
 function docIcon(file) {
-    return /\.pdf$/i.test(file) ? "fa-file-pdf" : "fa-file-image";
+    return /\.pdf$/i.test(file || "") ? "fa-file-pdf" : "fa-file-image";
 }
 
 function openReview(id) {
@@ -175,6 +149,12 @@ function openReview(id) {
     reviewingId = id;
 
     const pending = v.status === "Pending";
+    const fields = [
+        [CFG.idLabel, v.docNumber],
+        [CFG.locationLabel, v.location],
+        ["District", v.district],
+        ["State", v.state]
+    ];
 
     document.getElementById("reviewTitle").textContent = CFG.label + " Application · " + v.id;
     document.getElementById("reviewBody").innerHTML = `
@@ -185,28 +165,24 @@ function openReview(id) {
                 <small class="text-muted">${Store.esc(v.email)} · ${Store.esc(v.mobile)}</small>
             </div>
             <div class="applicant-status">
-                <span class="${Store.badge(v.status)}">${Store.esc(v.status)}</span>
+                ${Store.statusBadge(v.status)}
                 <small class="text-muted">Submitted ${Store.date(v.submitted)}</small>
             </div>
         </div>
 
         <dl class="detail-list">
-            ${CFG.fields.map(([label, fn]) => `<div><dt>${label}</dt><dd>${Store.esc(fn(v))}</dd></div>`).join("")}
+            ${fields.map(([label, value]) => `<div><dt>${Store.esc(label)}</dt><dd>${Store.esc(value || "—")}</dd></div>`).join("")}
         </dl>
 
-        <h4 class="section-title">Submitted Documents</h4>
-        <div class="doc-layout">
-            <div class="doc-list" role="list">
-                ${v.docs.map((d, i) => `
-                    <button type="button" class="doc-item${i === 0 ? " active" : ""}" data-doc="${i}" role="listitem">
-                        <i class="fa-solid ${docIcon(d.file)}"></i>
-                        <span>
-                            <strong>${Store.esc(d.type)}</strong>
-                            <small>${Store.esc(d.file)} · ${Store.esc(d.size)}</small>
-                        </span>
-                    </button>`).join("")}
+        <h4 class="section-title">Submitted Document</h4>
+        <div class="doc-preview">
+            <div class="doc-sheet">
+                <i class="fa-solid ${docIcon(v.docFile)}"></i>
+                <strong>${Store.esc(v.docType || "Document")}</strong>
+                <span>${Store.esc(v.docNumber || "")}</span>
+                <div class="doc-lines"><span></span><span></span><span></span><span></span></div>
             </div>
-            <div class="doc-preview" id="docPreview"></div>
+            <small class="text-muted">Preview placeholder · ${Store.esc(v.docFile || "—")}${v.docSize ? " · " + Store.esc(v.docSize) : ""}</small>
         </div>
 
         ${pending ? `
@@ -237,34 +213,14 @@ function openReview(id) {
         <button class="btn btn-secondary" type="button" data-close>Close</button>
     `;
 
-    showDoc(v, 0);
     Admin.openModal("reviewModal");
 }
 
-function showDoc(v, index) {
-    const d = v.docs[index];
-    if (!d) return;
-    document.querySelectorAll("#reviewBody .doc-item").forEach((el, i) => el.classList.toggle("active", i === index));
-    document.getElementById("docPreview").innerHTML = `
-        <div class="doc-sheet">
-            <i class="fa-solid ${docIcon(d.file)}"></i>
-            <strong>${Store.esc(d.type)}</strong>
-            <span>${Store.esc(d.number)}</span>
-            <div class="doc-lines"><span></span><span></span><span></span><span></span></div>
-        </div>
-        <small class="text-muted">Preview placeholder · ${Store.esc(d.file)}</small>
-    `;
-}
-
 function onReviewClick(e) {
-    const v = Store.find(VERIFY_KEY, reviewingId);
-    if (!v) return;
-
-    const doc = e.target.closest("[data-doc]");
-    if (doc) return showDoc(v, Number(doc.dataset.doc));
-
     const action = e.target.closest("[data-verify]");
     if (!action) return;
+    const v = Store.find(VERIFY_KEY, reviewingId);
+    if (!v) return;
     if (action.dataset.verify === "approve") approveApplication(v);
     if (action.dataset.verify === "reject") openReject(v);
 }
@@ -277,7 +233,7 @@ function approveApplication(v) {
     boxes.forEach(b => b.closest(".checkbox-row").classList.toggle("unchecked", !b.checked));
 
     if (unchecked.length) {
-        showToast("Tick all " + boxes.length + " checklist items to confirm the documents were verified", "warning", { title: "Checklist incomplete" });
+        showToast("Tick all " + boxes.length + " checklist items to confirm the document was verified", "warning", { title: "Checklist incomplete" });
         unchecked[0].focus();
         return;
     }
@@ -303,7 +259,7 @@ function openReject(v) {
     form.reset();
     Validator.reset(form);
     document.getElementById("rejectIntro").textContent =
-        "Tell " + v.name + " why the registration was rejected so they can correct and resubmit their documents.";
+        "Tell " + v.name + " why the registration was rejected so they can correct and resubmit their " + (v.docType || "document") + ".";
     Admin.closeModal("reviewModal");
     Admin.openModal("rejectModal");
 }
@@ -317,7 +273,7 @@ async function rejectApplication(e) {
 
     const ok = await confirmDialog({
         title: "Reject " + v.name + "?",
-        message: "The applicant will be notified with your reason and must resubmit documents to register.",
+        message: "The applicant will be notified with your reason and must resubmit the document to register.",
         confirmText: "Reject Application",
         danger: true
     });

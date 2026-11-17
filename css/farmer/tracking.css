@@ -1,5 +1,5 @@
 /* Farmer — Order Tracking: page-specific layout only.
-   Shared components (stepper, timeline, detail-list, modal) live in ../theme.css */
+   Shared components (stepper, detail-list) live in ../theme.css */
 
 .tracking-layout {
     display: grid;
@@ -70,48 +70,25 @@
     font-size: 12px;
 }
 
-.eta {
-    margin: 14px 0 20px;
-    font-size: 14px;
-}
-
-.track-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(220px, 2fr);
-    gap: 28px;
-    padding-top: 18px;
-    border-top: 1px solid var(--border);
-}
-
-.timeline-title {
-    font-size: 14px;
-    margin-bottom: 14px;
-}
-
-.detail-list .span-full {
-    grid-column: 1 / -1;
-}
-
-.order-summary {
-    padding: 12px 14px;
-    margin-bottom: 18px;
-    border-radius: var(--radius-sm);
-    background: var(--primary-softer);
-    border: 1px solid var(--primary-border);
-    font-size: 14px;
+.order-facts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding-bottom: 18px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
 }
 
 @media (max-width: 1100px) {
-    .tracking-layout,
-    .track-grid {
+    .tracking-layout {
         grid-template-columns: 1fr;
-    }
-
-    .tracking-layout > .card + .card {
-        margin-top: 0;
     }
 
     .track-list {
         max-height: 320px;
+    }
+}
+
+@media (max-width: 768px) {
+    .order-facts {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }

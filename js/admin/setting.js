@@ -18,14 +18,12 @@ const DEFAULTS = {
     notifyRegistration: true,
     notifyDisputes: true,
     notifyHighValue: true,
-    highValueThreshold: 1000000,
-    weeklyReport: false,
-    maintenanceMode: false
+    highValueThreshold: 1000000
 };
 
 const TEXT_FIELDS = ["platformName", "supportEmail", "supportPhone"];
 const NUMBER_FIELDS = ["commission", "gst", "minOrderQty", "sessionTimeout", "maxLoginAttempts", "maxUpload", "highValueThreshold"];
-const TOGGLES = ["notifyRegistration", "notifyDisputes", "notifyHighValue", "weeklyReport", "maintenanceMode"];
+const TOGGLES = ["notifyRegistration", "notifyDisputes", "notifyHighValue"];
 
 let dirty = false;
 
@@ -129,10 +127,6 @@ function saveSettings(e) {
     Admin.log("Updated platform settings (" + changed.length + " field" + (changed.length > 1 ? "s" : "") + ")", "Settings");
     setDirty(false, next.updatedAt);
     showToast("Platform settings saved successfully", "success");
-
-    if (next.maintenanceMode && !before.maintenanceMode) {
-        showToast("Maintenance mode is ON. New orders are paused for all users.", "warning");
-    }
 }
 
 async function resetDefaults() {

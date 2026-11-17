@@ -26,12 +26,7 @@
                 <div class="page-header">
                     <div>
                         <h1>Purchase History</h1>
-                        <p class="page-subtitle">Completed and closed biomass purchase orders.</p>
-                    </div>
-                    <div class="page-actions">
-                        <button type="button" class="btn btn-primary" id="exportBtn">
-                            <i class="fa-solid fa-file-csv"></i> Export CSV
-                        </button>
+                        <p class="page-subtitle">Biomass purchase orders that have been delivered.</p>
                     </div>
                 </div>
 
@@ -85,15 +80,6 @@
                                 <input type="date" id="toDate" data-label="To date" data-rules="date|notFuture|sameOrAfter:#fromDate">
                             </div>
                             <div class="form-group">
-                                <label for="statusFilter">Status</label>
-                                <select id="statusFilter" data-novalidate>
-                                    <option value="">All closed</option>
-                                    <option>Delivered</option>
-                                    <option>Rejected</option>
-                                    <option>Cancelled</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
                                 <label for="searchInput">Search</label>
                                 <input type="search" id="searchInput" placeholder="PO ID, farmer, biomass" data-novalidate>
                             </div>
@@ -116,8 +102,8 @@
                                     <th>Price / Ton</th>
                                     <th>Amount</th>
                                     <th>Order Date</th>
-                                    <th>Closed On</th>
-                                    <th>Status</th>
+                                    <th>Delivered On</th>
+                                    <th>Payment</th>
                                 </tr>
                             </thead>
                             <tbody id="historyTable"></tbody>

@@ -2,12 +2,10 @@
 // FARMER DASHBOARD
 // =========================
 
-const FARMER_NAME = "Ramesh Patil";
-
 document.addEventListener("DOMContentLoaded", () => {
 
-    const listings = Store.get("biomassListings").filter(l => l.farmer === FARMER_NAME);
-    const orders = Store.get("purchaseOrders").filter(o => o.farmer === FARMER_NAME);
+    const listings = Farmer.listings();
+    const orders = Farmer.orders().sort((a, b) => String(b.orderDate).localeCompare(String(a.orderDate)));
 
     loadKpis(listings, orders);
     loadOrders(orders);
@@ -28,7 +26,7 @@ function loadOrders(orders) {
     const table = document.getElementById("orderTable");
 
     if (!orders.length) {
-        table.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-inbox"></i>No orders yet</div></td></tr>`;
+        table.innerHTML = Farmer.emptyRow(6, "fa-inbox", "No orders yet");
         return;
     }
 
@@ -37,18 +35,17 @@ function loadOrders(orders) {
             <td class="fw-600">${Store.esc(o.id)}</td>
             <td>${Store.esc(o.manufacturer)}</td>
             <td>${Store.esc(o.biomassType)}</td>
-            <td>${Store.esc(o.quantity)} Tons</td>
+            <td>${Farmer.tons(o.quantity)}</td>
             <td>${Store.inr(o.total)}</td>
-            <td><span class="${Store.badge(o.status)}">${Store.esc(o.status)}</span></td>
+            <td>${Store.statusBadge(o.status)}</td>
         </tr>
     `).join("");
 }
 
 function loadStatus(orders) {
-    const groups = ["Pending", "Accepted", "In Transit", "Delivered"];
     const total = orders.length || 1;
 
-    document.getElementById("statusList").innerHTML = groups.map(label => {
+    document.getElementById("statusList").innerHTML = Store.ORDER_STEPS.map(label => {
         const count = orders.filter(o => o.status === label).length;
         return `
             <div>

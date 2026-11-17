@@ -1,10 +1,6 @@
 /* Admin audit & compliance — page-specific layout only.
    Shared components live in ../theme.css */
 
-.modal-lg {
-    max-width: 760px;
-}
-
 .tab i {
     margin-right: 6px;
 }
@@ -37,66 +33,4 @@
 
 .nowrap {
     white-space: nowrap;
-}
-
-.mono {
-    font-family: Consolas, "Courier New", monospace;
-    font-size: 13px;
-    color: var(--text-muted);
-}
-
-/* Certificate preview */
-
-.certificate {
-    border: 2px solid var(--primary-border);
-    border-radius: var(--radius-lg);
-    background: var(--primary-softer);
-    padding: 32px 28px;
-    text-align: center;
-    font-size: 14px;
-}
-
-.certificate p {
-    line-height: 1.6;
-    margin-bottom: 8px;
-}
-
-.certificate-brand {
-    color: var(--primary);
-    font-weight: 700;
-    letter-spacing: .04em;
-}
-
-.certificate h2 {
-    font-size: 20px;
-    margin: 10px 0 4px;
-}
-
-.certificate h3 {
-    font-size: 22px;
-    color: var(--primary-dark);
-    margin: 6px 0 12px;
-}
-
-.certificate-no {
-    color: var(--text-muted);
-}
-
-.certificate-status {
-    color: var(--primary-dark);
-    font-weight: 600;
-}
-
-.certificate-foot {
-    display: flex;
-    justify-content: space-around;
-    gap: 12px;
-    margin-top: 22px;
-    padding-top: 16px;
-    border-top: 1px solid var(--primary-border);
-}
-
-.certificate-foot small {
-    display: block;
-    color: var(--text-subtle);
 }

@@ -26,12 +26,7 @@
                 <div class="page-header">
                     <div>
                         <h1>Order History</h1>
-                        <p class="page-subtitle">Completed and closed orders with your sales summary.</p>
-                    </div>
-                    <div class="page-actions">
-                        <button type="button" class="btn btn-secondary" id="exportBtn">
-                            <i class="fa-solid fa-file-csv"></i> Export CSV
-                        </button>
+                        <p class="page-subtitle">Delivered orders with your sales summary.</p>
                     </div>
                 </div>
 
@@ -42,7 +37,7 @@
                         <div class="kpi-icon"><i class="fa-solid fa-clipboard-list"></i></div>
                         <div>
                             <div class="kpi-value" id="kpiOrders">0</div>
-                            <div class="kpi-label">Closed Orders</div>
+                            <div class="kpi-label">Delivered Orders</div>
                         </div>
                     </div>
                     <div class="kpi-card">
@@ -72,7 +67,7 @@
 
                     <div class="card-header">
                         <div>
-                            <div class="card-title">Closed Orders</div>
+                            <div class="card-title">Delivered Orders</div>
                             <div class="card-subtitle" id="resultCount">0 orders</div>
                         </div>
                     </div>
@@ -83,15 +78,6 @@
                             <div class="form-group filter-search">
                                 <label for="searchInput">Search</label>
                                 <input type="search" id="searchInput" placeholder="Order ID, manufacturer or biomass" data-novalidate>
-                            </div>
-                            <div class="form-group">
-                                <label for="statusFilter">Status</label>
-                                <select id="statusFilter" data-novalidate>
-                                    <option value="">All closed</option>
-                                    <option>Delivered</option>
-                                    <option>Rejected</option>
-                                    <option>Cancelled</option>
-                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="fromDate">Order Date From</label>
@@ -118,8 +104,8 @@
                                         <th>Price / Ton</th>
                                         <th>Amount</th>
                                         <th>Order Date</th>
-                                        <th>Closed On</th>
-                                        <th>Status</th>
+                                        <th>Delivered On</th>
+                                        <th>Payment</th>
                                     </tr>
                                 </thead>
                                 <tbody id="historyTable"></tbody>

@@ -1,23 +1,12 @@
 // =========================
 // ADMIN — USER MANAGEMENT (US038)
+// Admin can view users and block / unblock accounts.
+// User details cannot be modified by the admin.
 // =========================
 
 const USERS_KEY = "admin_users";
 
-let editingId = null;   // null → add mode
 let blockingId = null;
-
-/* ---------- uniqueness rules for the add / edit form ---------- */
-
-Validator.addRule("uniqueEmail", v => {
-    const taken = Admin.get(USERS_KEY).some(u => u.id !== editingId && u.email.toLowerCase() === v.toLowerCase());
-    return taken ? "This email is already registered to another user" : "";
-});
-
-Validator.addRule("uniqueMobile", v => {
-    const taken = Admin.get(USERS_KEY).some(u => u.id !== editingId && u.mobile === v);
-    return taken ? "This mobile number is already registered to another user" : "";
-});
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -30,9 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("roleFilter").addEventListener("change", renderUsers);
     document.getElementById("statusFilter").addEventListener("change", renderUsers);
     document.getElementById("clearFilters").addEventListener("click", clearFilters);
-    document.getElementById("addUserBtn").addEventListener("click", () => openUserForm(null));
-    document.getElementById("exportBtn").addEventListener("click", exportUsers);
-    document.getElementById("userForm").addEventListener("submit", saveUser);
     document.getElementById("blockForm").addEventListener("submit", blockUser);
     document.getElementById("userTable").addEventListener("click", onTableAction);
     document.getElementById("viewFooter").addEventListener("click", onTableAction);
@@ -93,16 +79,14 @@ function renderUsers() {
             <td>${Store.esc(u.role)}</td>
             <td>${Store.esc(u.email)}</td>
             <td>${Store.esc(u.mobile)}</td>
-            <td><span class="${Store.badge(u.status)}">${Store.esc(u.status)}</span></td>
+            <td>${Store.statusBadge(u.status)}</td>
             <td>${Store.date(u.joined)}</td>
             <td>
                 <div class="table-actions">
                     <button class="btn btn-secondary btn-sm btn-icon" type="button" data-action="view" data-id="${Store.esc(u.id)}" title="View details" aria-label="View ${Store.esc(u.name)}"><i class="fa-solid fa-eye"></i></button>
-                    <button class="btn btn-secondary btn-sm btn-icon" type="button" data-action="edit" data-id="${Store.esc(u.id)}" title="Edit user" aria-label="Edit ${Store.esc(u.name)}"><i class="fa-solid fa-pen"></i></button>
                     ${u.status === "Blocked"
                         ? `<button class="btn btn-secondary btn-sm btn-icon" type="button" data-action="unblock" data-id="${Store.esc(u.id)}" title="Unblock user" aria-label="Unblock ${Store.esc(u.name)}"><i class="fa-solid fa-unlock"></i></button>`
                         : `<button class="btn btn-danger btn-sm btn-icon" type="button" data-action="block" data-id="${Store.esc(u.id)}" title="Block user" aria-label="Block ${Store.esc(u.name)}"><i class="fa-solid fa-ban"></i></button>`}
-                    <button class="btn btn-danger btn-sm btn-icon" type="button" data-action="delete" data-id="${Store.esc(u.id)}" title="Delete user" aria-label="Delete ${Store.esc(u.name)}"><i class="fa-solid fa-trash-can"></i></button>
                 </div>
             </td>
         </tr>
@@ -123,14 +107,12 @@ function onTableAction(e) {
     const id = btn.dataset.id;
     switch (btn.dataset.action) {
         case "view": viewUser(id); break;
-        case "edit": Admin.closeModal("viewModal"); openUserForm(id); break;
         case "block": Admin.closeModal("viewModal"); openBlockForm(id); break;
         case "unblock": Admin.closeModal("viewModal"); unblockUser(id); break;
-        case "delete": deleteUser(id); break;
     }
 }
 
-/* ---------- view ---------- */
+/* ---------- view (read-only) ---------- */
 
 function viewUser(id) {
     const u = Store.find(USERS_KEY, id);
@@ -142,7 +124,7 @@ function viewUser(id) {
             <span class="avatar avatar-lg">${Store.esc(Admin.initials(u.name))}</span>
             <div>
                 <div class="fw-600">${Store.esc(u.name)}</div>
-                <span class="${Store.badge(u.status)}">${Store.esc(u.status)}</span>
+                ${Store.statusBadge(u.status)}
             </div>
         </div>
         <dl class="detail-list">
@@ -152,6 +134,7 @@ function viewUser(id) {
             <div><dt>Mobile</dt><dd>${Store.esc(u.mobile)}</dd></div>
             <div><dt>Location</dt><dd>${Store.esc(u.location || "—")}, ${Store.esc(u.state || "—")}</dd></div>
             <div><dt>Joined</dt><dd>${Store.date(u.joined)}</dd></div>
+            ${u.role === "Manufacturer" ? `<div><dt>Pellet Quality Rating</dt><dd>${Store.ratingHtml(u.name)}</dd></div>` : ""}
         </dl>
         ${u.status === "Blocked" ? `
             <div class="note-box mt-2">
@@ -162,84 +145,12 @@ function viewUser(id) {
 
     document.getElementById("viewFooter").innerHTML = `
         <button class="btn btn-secondary" type="button" data-close>Close</button>
-        <button class="btn btn-secondary" type="button" data-action="edit" data-id="${Store.esc(u.id)}"><i class="fa-solid fa-pen"></i> Edit</button>
         ${u.status === "Blocked"
             ? `<button class="btn btn-primary" type="button" data-action="unblock" data-id="${Store.esc(u.id)}"><i class="fa-solid fa-unlock"></i> Unblock</button>`
             : `<button class="btn btn-danger" type="button" data-action="block" data-id="${Store.esc(u.id)}"><i class="fa-solid fa-ban"></i> Block</button>`}
     `;
 
     Admin.openModal("viewModal");
-}
-
-/* ---------- add / edit ---------- */
-
-function openUserForm(id) {
-    const form = document.getElementById("userForm");
-    form.reset();
-    Validator.reset(form);
-    editingId = id;
-
-    const statusSelect = document.getElementById("userStatus");
-    const statusGroup = document.getElementById("userStatusGroup");
-
-    if (id) {
-        const u = Store.find(USERS_KEY, id);
-        if (!u) return showToast("User not found", "error");
-        document.getElementById("userModalTitle").textContent = "Edit User · " + u.id;
-        document.getElementById("userSubmit").innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
-        document.getElementById("userName").value = u.name;
-        document.getElementById("userRole").value = u.role;
-        document.getElementById("userEmail").value = u.email;
-        document.getElementById("userMobile").value = u.mobile;
-        document.getElementById("userLocation").value = u.location || "";
-        document.getElementById("userState").value = u.state || "";
-        // status changes go through block / unblock / verification
-        statusSelect.disabled = true;
-        statusGroup.classList.add("hidden");
-    } else {
-        document.getElementById("userModalTitle").textContent = "Add User";
-        document.getElementById("userSubmit").innerHTML = '<i class="fa-solid fa-user-plus"></i> Add User';
-        statusSelect.disabled = false;
-        statusGroup.classList.remove("hidden");
-    }
-
-    Admin.openModal("userModal");
-}
-
-function saveUser(e) {
-    e.preventDefault();
-    if (!Validator.validateForm("#userForm")) return;
-
-    const data = {
-        name: document.getElementById("userName").value.trim().replace(/\s+/g, " "),
-        role: document.getElementById("userRole").value,
-        email: document.getElementById("userEmail").value.trim().toLowerCase(),
-        mobile: document.getElementById("userMobile").value.trim(),
-        location: document.getElementById("userLocation").value.trim(),
-        state: document.getElementById("userState").value
-    };
-
-    if (editingId) {
-        const before = Store.find(USERS_KEY, editingId);
-        const changed = Object.keys(data).some(k => String(before[k] || "") !== String(data[k]));
-        if (!changed) {
-            showToast("No changes to save", "info");
-            Admin.closeModal("userModal");
-            return;
-        }
-        Store.update(USERS_KEY, editingId, data);
-        Admin.log("Updated user details for " + data.name + " (" + editingId + ")", "Users");
-        showToast(data.name + "'s details were updated", "success");
-    } else {
-        data.status = document.getElementById("userStatus").value;
-        data.joined = Store.iso(0);
-        const user = Store.add(USERS_KEY, data, "USR-");
-        Admin.log("Added user " + user.name + " (" + user.id + ")", "Users");
-        showToast(user.name + " was added as " + user.role, "success");
-    }
-
-    Admin.closeModal("userModal");
-    renderUsers();
 }
 
 /* ---------- block / unblock ---------- */
@@ -301,42 +212,9 @@ async function unblockUser(id) {
 
     Store.update(USERS_KEY, id, {
         status: u.previousStatus && u.previousStatus !== "Blocked" ? u.previousStatus : "Active",
-        blockCategory: "", blockReason: "", blockedOn: ""
+        previousStatus: "", blockCategory: "", blockReason: "", blockedOn: ""
     });
     Admin.log("Unblocked user " + u.name + " (" + u.id + ")", "Users");
     renderUsers();
     showToast(u.name + " has been unblocked", "success");
-}
-
-/* ---------- delete ---------- */
-
-async function deleteUser(id) {
-    const u = Store.find(USERS_KEY, id);
-    if (!u) return showToast("User not found", "error");
-
-    const ok = await confirmDialog({
-        title: "Delete " + u.name + "?",
-        message: "This permanently removes the account and cannot be undone.",
-        confirmText: "Delete",
-        danger: true
-    });
-    if (!ok) return;
-
-    Store.remove(USERS_KEY, id);
-    Admin.log("Deleted user " + u.name + " (" + u.id + ")", "Users");
-    renderUsers();
-    showToast(u.name + " was deleted", "success");
-}
-
-/* ---------- export ---------- */
-
-function exportUsers() {
-    const list = filteredUsers();
-    if (!list.length) return showToast("There are no users to export for the current filters", "warning");
-
-    Admin.exportCSV("users-" + Store.iso(0) + ".csv",
-        ["User ID", "Name", "Role", "Email", "Mobile", "Location", "State", "Status", "Joined"],
-        list.map(u => [u.id, u.name, u.role, u.email, u.mobile, u.location, u.state, u.status, u.joined]));
-    Admin.log("Exported user list (" + list.length + " records)", "Users");
-    showToast(list.length + " users exported to CSV", "success");
 }

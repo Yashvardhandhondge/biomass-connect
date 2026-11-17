@@ -2,13 +2,20 @@
 
 .filter-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
     gap: 16px;
     align-items: start;
 }
 
 .filter-actions {
     padding-top: 25px;
+}
+
+#viewModalBody h4 {
+    font-size: 14px;
+    margin: 22px 0 12px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
 }
 
 @media (max-width: 1100px) {

@@ -71,17 +71,6 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="batchNo">Batch Number</label>
-                                        <input type="text" id="batchNo" placeholder="e.g. GP-2026-118" data-filter="upper"
-                                               data-rules="required|batch|uniqueBatch">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="productionDate">Production Date</label>
-                                        <input type="date" id="productionDate" data-rules="required|date|notFuture|minDate:-365">
-                                    </div>
-
-                                    <div class="form-group">
                                         <label for="quantity">Quantity (Tons)</label>
                                         <input type="number" id="quantity" placeholder="e.g. 100" step="any" inputmode="decimal"
                                                data-label="Quantity" data-rules="required|number|positive|max:10000|decimals:2">
@@ -99,9 +88,9 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="location">Dispatch Location</label>
+                                        <label for="location">Pickup Location</label>
                                         <input type="text" id="location" placeholder="e.g. Nashik, Maharashtra" value="Nashik, Maharashtra"
-                                               data-label="Dispatch location" data-rules="required|text|minlen:2|maxlen:100">
+                                               data-label="Pickup location" data-rules="required|text|minlen:2|maxlen:100">
                                     </div>
 
                                 </div>
@@ -150,7 +139,7 @@
 
                                 <div class="form-grid mt-3">
 
-                                    <div class="form-section-title">Certification &amp; Documents</div>
+                                    <div class="form-section-title">Certification</div>
 
                                     <div class="form-group">
                                         <label for="certification">Certification <span class="text-subtle">(optional)</span></label>
@@ -164,25 +153,11 @@
                                         </datalist>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label for="qualityReport">Quality Test Report <span class="text-subtle">(optional)</span></label>
-                                        <input type="file" id="qualityReport" accept=".pdf,.jpg,.jpeg,.png"
-                                               data-label="Quality test report" data-rules="fileTypes:pdf,jpg,jpeg,png|maxSize:5">
-                                        <small class="form-hint">PDF, JPG or PNG, up to 5 MB</small>
-                                    </div>
-
-                                    <div class="form-group full">
-                                        <label for="description">Description <span class="text-subtle">(optional)</span></label>
-                                        <textarea id="description" rows="3" placeholder="Raw material, packaging (bags / loose), loading terms..."
-                                                  data-label="Description" data-rules="text|maxlen:500"></textarea>
-                                        <small class="form-hint"><span id="descCount">0</span>/500 characters</small>
-                                    </div>
-
                                 </div>
 
                                 <div class="form-actions">
                                     <button type="reset" class="btn btn-secondary">Clear</button>
-                                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-upload"></i> Publish Listing</button>
+                                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Publish Listing</button>
                                 </div>
                             </div>
 
@@ -199,7 +174,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="value-big" id="listingValue">₹0</div>
-                                <p class="form-hint">Quantity × price per ton</p>
+                                <p class="form-hint">Quantity × price per ton. A power plant buys the whole listing in one order.</p>
                             </div>
                         </section>
 

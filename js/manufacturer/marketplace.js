@@ -93,17 +93,16 @@ function renderListings() {
             <div class="card-body">
                 <div class="listing-price">${Store.inr(l.price)} <small>/ ton</small></div>
                 <dl class="detail-list mt-2">
-                    <div><dt>Quantity available</dt><dd>${Store.esc(l.quantity)} ${Store.esc(l.unit || "Tons")}</dd></div>
-                    <div><dt>Moisture</dt><dd>${l.moisture !== undefined && l.moisture !== "" ? Store.esc(l.moisture) + "%" : "—"}</dd></div>
-                    <div><dt>Location</dt><dd>${Store.esc([l.location, l.state].filter(Boolean).join(", "))}</dd></div>
+                    <div><dt>Quantity</dt><dd>${Store.esc(l.quantity)} ${Store.esc(l.unit || "Tons")}</dd></div>
                     <div><dt>Available from</dt><dd>${Store.date(l.availableFrom)}</dd></div>
+                    <div class="span-full"><dt>Location</dt><dd>${Store.esc([l.location, l.state].filter(Boolean).join(", "))}</dd></div>
                 </dl>
                 ${l.description ? `<p class="listing-desc">${Store.esc(l.description)}</p>` : ""}
             </div>
             <div class="listing-footer">
-                <span class="text-muted">Value: ${Store.inr(Number(l.price) * Number(l.quantity))}</span>
+                <span class="text-muted">Total: <strong>${Store.inr(Number(l.price) * Number(l.quantity))}</strong></span>
                 <a class="btn btn-primary btn-sm" href="purchase-orders.html?listing=${encodeURIComponent(l.id)}">
-                    <i class="fa-solid fa-cart-plus"></i> Place Order
+                    <i class="fa-solid fa-cart-plus"></i> Buy Listing
                 </a>
             </div>
         </article>`;

@@ -19,8 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("change", updateSummary);
     updateSummary();
 
-    document.getElementById("photo").addEventListener("change", previewPhoto);
-
     document.getElementById("resetBtn").addEventListener("click", () => {
         resetForm(profile);
         updateCount();
@@ -55,34 +53,10 @@ function updateSummary() {
 
     const location = [value("location"), value("district"), value("state")].filter(Boolean).join(", ");
     const date = value("availableFrom");
-    const moisture = value("moisture");
 
     document.getElementById("sumType").textContent = value("biomassType") || "—";
     document.getElementById("sumDate").textContent = Validator.parseDate(date) ? Store.date(date) : "—";
     document.getElementById("sumLocation").textContent = location || "—";
-    document.getElementById("sumMoisture").textContent = moisture !== "" && !isNaN(Number(moisture)) ? moisture + "%" : "—";
-}
-
-function previewPhoto() {
-    const input = document.getElementById("photo");
-    const preview = document.getElementById("photoPreview");
-
-    preview.classList.add("hidden");
-    preview.removeAttribute("src");
-
-    if (!input.files.length) return;
-    if (!Validator.validateField(input)) {
-        showToast("Please choose a JPG or PNG image under 5 MB", "error");
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-        preview.src = reader.result;
-        preview.classList.remove("hidden");
-    };
-    reader.readAsDataURL(input.files[0]);
-    showToast("Photo attached: " + input.files[0].name, "success");
 }
 
 function resetForm(profile) {
@@ -90,7 +64,6 @@ function resetForm(profile) {
     form.reset();
     Validator.reset(form);
     prefillLocation(profile);
-    document.getElementById("photoPreview").classList.add("hidden");
     updateSummary();
 }
 
@@ -108,9 +81,7 @@ async function createListing(profile) {
         district: value("district"),
         state: value("state"),
         availableFrom: value("availableFrom"),
-        moisture: value("moisture") === "" ? null : Number(value("moisture")),
         description: value("description"),
-        photo: document.getElementById("photo").files.length ? document.getElementById("photo").files[0].name : "",
         status: "Active"
     };
 

@@ -26,12 +26,12 @@
                 <div class="page-header">
                     <div>
                         <h1>Purchase History</h1>
-                        <p class="page-subtitle">Delivered and closed pellet orders with spend analysis.</p>
+                        <p class="page-subtitle">Delivered pellet orders and what you spent on them.</p>
                     </div>
                     <div class="page-actions">
-                        <button class="btn btn-primary" type="button" id="exportBtn">
-                            <i class="fa-solid fa-file-csv"></i> Export CSV
-                        </button>
+                        <a class="btn btn-secondary" href="tracking.html">
+                            <i class="fa-solid fa-truck-fast"></i> Order Tracking
+                        </a>
                     </div>
                 </div>
 
@@ -47,7 +47,7 @@
                         <div class="kpi-icon"><i class="fa-solid fa-weight-hanging"></i></div>
                         <div>
                             <div class="kpi-value" id="kpiTons">0 t</div>
-                            <div class="kpi-label">Total Pellets Received</div>
+                            <div class="kpi-label">Pellets Delivered</div>
                         </div>
                     </div>
                     <div class="kpi-card">
@@ -70,7 +70,7 @@
 
                     <div class="card-header">
                         <div>
-                            <div class="card-title">Order History</div>
+                            <div class="card-title">Delivered Orders</div>
                             <div class="card-subtitle" id="resultCount"></div>
                         </div>
                     </div>
@@ -78,12 +78,12 @@
                     <form class="card-body" id="filterForm" novalidate>
                         <div class="filter-grid">
                             <div class="form-group">
-                                <label for="fromDate">Order Date From</label>
+                                <label for="fromDate">Delivered From</label>
                                 <input type="date" id="fromDate" data-label="From date" data-rules="date|notFuture">
                                 <small class="error" id="fromDateError"></small>
                             </div>
                             <div class="form-group">
-                                <label for="toDate">Order Date To</label>
+                                <label for="toDate">Delivered To</label>
                                 <input type="date" id="toDate" data-label="To date" data-rules="date|notFuture|sameOrAfter:#fromDate">
                                 <small class="error" id="toDateError"></small>
                             </div>
@@ -91,15 +91,6 @@
                                 <label for="supplierFilter">Supplier</label>
                                 <select id="supplierFilter" data-novalidate>
                                     <option value="">All suppliers</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="statusFilter">Status</label>
-                                <select id="statusFilter" data-novalidate>
-                                    <option value="">All closed orders</option>
-                                    <option>Delivered</option>
-                                    <option>Cancelled</option>
-                                    <option>Rejected</option>
                                 </select>
                             </div>
                             <div class="form-group filter-actions">
@@ -119,8 +110,8 @@
                                     <th>Price / Ton</th>
                                     <th>Total</th>
                                     <th>Ordered On</th>
-                                    <th>Closed On</th>
-                                    <th>Status</th>
+                                    <th>Delivered On</th>
+                                    <th>Batch Score</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>

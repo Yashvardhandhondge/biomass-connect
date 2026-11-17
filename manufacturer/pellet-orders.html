@@ -26,11 +26,11 @@
                 <div class="page-header">
                     <div>
                         <h1>Pellet Orders Received</h1>
-                        <p class="page-subtitle">Review orders from power plants and accept or reject them.</p>
+                        <p class="page-subtitle">Power plants buy a whole pellet listing. Every order must be supplied; pickup and delivery are arranged by the logistics team.</p>
                     </div>
                     <div class="page-actions">
                         <a class="btn btn-secondary" href="pellet-tracking.html">
-                            <i class="fa-solid fa-route"></i> Track Dispatches
+                            <i class="fa-solid fa-route"></i> Order Tracking
                         </a>
                     </div>
                 </div>
@@ -57,9 +57,8 @@
                                     <th>Quantity</th>
                                     <th>Amount</th>
                                     <th>Order Date</th>
-                                    <th>Requested Delivery</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
+                                    <th>Details</th>
                                 </tr>
                             </thead>
                             <tbody id="orderTable"></tbody>
@@ -77,87 +76,15 @@
     <!-- VIEW MODAL -->
 
     <div class="modal-backdrop" id="viewModal">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="viewTitle">
+        <div class="modal modal-lg" role="dialog" aria-modal="true" aria-labelledby="viewTitle">
             <div class="modal-header">
                 <h3 id="viewTitle">Order details</h3>
                 <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body" id="viewBody"></div>
-            <div class="modal-footer" id="viewFooter">
+            <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-close>Close</button>
             </div>
-        </div>
-    </div>
-
-    <!-- ACCEPT MODAL -->
-
-    <div class="modal-backdrop" id="acceptModal">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="acceptTitle">
-            <div class="modal-header">
-                <h3 id="acceptTitle">Accept order</h3>
-                <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="acceptForm" novalidate>
-                <div class="modal-body">
-                    <p class="text-muted mb-2" id="acceptInfo"></p>
-                    <div class="form-grid">
-                        <div class="form-group full">
-                            <label for="expectedDelivery">Expected Delivery Date</label>
-                            <input type="date" id="expectedDelivery" data-label="Expected delivery date"
-                                   data-rules="required|date|notPast|maxDate:+90">
-                            <small class="form-hint" id="requestedHint"></small>
-                        </div>
-                        <div class="form-group full">
-                            <label for="acceptNote">Note to Power Plant <span class="text-subtle">(optional)</span></label>
-                            <textarea id="acceptNote" rows="3" placeholder="Dispatch plan, packaging, contact person..."
-                                      data-label="Note" data-rules="text|maxlen:300"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-close>Cancel</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Accept Order</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- REJECT MODAL -->
-
-    <div class="modal-backdrop" id="rejectModal">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rejectTitle">
-            <div class="modal-header">
-                <h3 id="rejectTitle">Reject order</h3>
-                <button class="modal-close" type="button" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="rejectForm" novalidate>
-                <div class="modal-body">
-                    <p class="text-muted mb-2" id="rejectInfo"></p>
-                    <div class="form-grid">
-                        <div class="form-group full">
-                            <label for="rejectReason">Reason</label>
-                            <select id="rejectReason" data-label="Reason" data-rules="required">
-                                <option value="">Select a reason</option>
-                                <option>Insufficient stock</option>
-                                <option>Delivery date not feasible</option>
-                                <option>Delivery location not serviceable</option>
-                                <option>Price or payment terms mismatch</option>
-                                <option>Requested specification not available</option>
-                                <option>Other</option>
-                            </select>
-                        </div>
-                        <div class="form-group full">
-                            <label for="rejectDetails">Details</label>
-                            <textarea id="rejectDetails" rows="3" placeholder="Explain the reason so the power plant can plan accordingly"
-                                      data-label="Details" data-rules="required|text|minlen:10|maxlen:300"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-close>Cancel</button>
-                    <button type="submit" class="btn btn-danger"><i class="fa-solid fa-xmark"></i> Reject Order</button>
-                </div>
-            </form>
         </div>
     </div>
 

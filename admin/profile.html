@@ -26,127 +26,37 @@
                 <div class="page-header">
                     <div>
                         <h1>My Profile</h1>
-                        <p class="page-subtitle">Manage your administrator details and account password.</p>
+                        <p class="page-subtitle">Details of the system administrator account.</p>
                     </div>
                 </div>
 
-                <!-- SUMMARY -->
+                <!-- PREDEFINED ADMIN DETAILS (read-only) -->
 
-                <section class="card profile-summary">
+                <section class="card profile-card">
                     <div class="card-body">
-                        <span class="avatar avatar-xl" id="profileAvatar">SA</span>
-                        <div>
-                            <h2 id="profileName">System Admin</h2>
-                            <p class="text-muted" id="profileMeta">Platform Administrator</p>
+
+                        <div class="profile-head">
+                            <span class="avatar avatar-xl">SA</span>
+                            <div>
+                                <h2>System Admin</h2>
+                                <p class="text-muted">Administrator · Biomass Connect</p>
+                            </div>
                         </div>
-                        <dl class="summary-list">
+
+                        <dl class="detail-list">
+                            <div><dt>Full Name</dt><dd>System Admin</dd></div>
                             <div><dt>Role</dt><dd>Administrator</dd></div>
-                            <div><dt>Admin Actions (30 days)</dt><dd id="actionCount">0</dd></div>
-                            <div><dt>Password Last Changed</dt><dd id="pwdChanged">—</dd></div>
+                            <div><dt>Email</dt><dd>admin@gmail.com</dd></div>
+                            <div><dt>Mobile Number</dt><dd>9876543210</dd></div>
+                            <div class="span-full"><dt>Organisation</dt><dd>Biomass Connect</dd></div>
                         </dl>
+
+                        <p class="form-hint mt-3">
+                            <i class="fa-solid fa-lock"></i> These details are predefined for the system administrator and cannot be edited.
+                        </p>
+
                     </div>
                 </section>
-
-                <div class="profile-grid">
-
-                    <!-- PROFILE DETAILS -->
-
-                    <section class="card">
-                        <div class="card-header">
-                            <div>
-                                <div class="card-title">Profile Details</div>
-                                <div class="card-subtitle">Your name appears in the top bar and in the audit log</div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <form id="profileForm" novalidate>
-                                <div class="form-grid">
-                                    <div class="form-group full">
-                                        <label for="adminName">Full Name</label>
-                                        <input type="text" id="adminName" placeholder="e.g. Neha Kulkarni" data-label="Full name" data-rules="required|name">
-                                        <small class="error"></small>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="adminEmail">Email</label>
-                                        <input type="email" id="adminEmail" placeholder="name@example.com" data-rules="required|email">
-                                        <small class="error"></small>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="adminMobile">Mobile Number</label>
-                                        <input type="tel" id="adminMobile" placeholder="10-digit mobile" inputmode="numeric" data-rules="required|mobile">
-                                        <small class="error"></small>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="adminDesignation">Designation</label>
-                                        <input type="text" id="adminDesignation" placeholder="e.g. Platform Administrator" data-label="Designation" data-rules="required|name|minlen:2|maxlen:50">
-                                        <small class="error"></small>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="adminDepartment">Department</label>
-                                        <select id="adminDepartment" data-rules="required">
-                                            <option value="">Select department</option>
-                                            <option>Operations</option>
-                                            <option>Verification &amp; Compliance</option>
-                                            <option>Finance</option>
-                                            <option>Customer Support</option>
-                                            <option>Technology</option>
-                                        </select>
-                                        <small class="error"></small>
-                                    </div>
-                                </div>
-                                <div class="form-actions">
-                                    <button class="btn btn-secondary" type="button" id="profileReset">Discard</button>
-                                    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save Profile</button>
-                                </div>
-                            </form>
-                        </div>
-                    </section>
-
-                    <!-- CHANGE PASSWORD -->
-
-                    <section class="card">
-                        <div class="card-header">
-                            <div>
-                                <div class="card-title">Change Password</div>
-                                <div class="card-subtitle">Use 8–20 characters with upper &amp; lower case, a number and a symbol</div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <form id="passwordForm" novalidate>
-                                <div class="form-group">
-                                    <label for="currentPassword">Current Password</label>
-                                    <div class="password-wrap">
-                                        <input type="password" id="currentPassword" autocomplete="current-password" placeholder="Enter current password" data-label="Current password" data-rules="required">
-                                        <button class="password-toggle" type="button" data-toggle="#currentPassword" aria-label="Show password"><i class="fa-regular fa-eye"></i></button>
-                                    </div>
-                                    <small class="error"></small>
-                                </div>
-                                <div class="form-group mt-2">
-                                    <label for="newPassword">New Password</label>
-                                    <div class="password-wrap">
-                                        <input type="password" id="newPassword" autocomplete="new-password" placeholder="Enter new password" data-label="New password" data-rules="required|password|different:#currentPassword">
-                                        <button class="password-toggle" type="button" data-toggle="#newPassword" aria-label="Show password"><i class="fa-regular fa-eye"></i></button>
-                                    </div>
-                                    <div class="progress strength mt-1"><span id="strengthBar"></span></div>
-                                    <small class="form-hint" id="strengthText">Password strength</small>
-                                    <small class="error"></small>
-                                </div>
-                                <div class="form-group mt-2">
-                                    <label for="confirmPassword">Confirm New Password</label>
-                                    <div class="password-wrap">
-                                        <input type="password" id="confirmPassword" autocomplete="new-password" placeholder="Re-enter new password" data-label="Confirm password" data-rules="required|match:#newPassword">
-                                        <button class="password-toggle" type="button" data-toggle="#confirmPassword" aria-label="Show password"><i class="fa-regular fa-eye"></i></button>
-                                    </div>
-                                    <small class="error"></small>
-                                </div>
-                                <div class="form-actions">
-                                    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-key"></i> Update Password</button>
-                                </div>
-                            </form>
-                        </div>
-                    </section>
-
-                </div>
 
             </main>
 
@@ -159,7 +69,6 @@
     <script src="../js/common/store.js"></script>
     <script src="../js/common/layout.js"></script>
     <script src="../js/admin/admin-common.js"></script>
-    <script src="../js/admin/profile.js"></script>
 
 </body>
 
